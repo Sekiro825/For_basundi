@@ -1,5 +1,6 @@
-import { Quicksand } from "next/font/google";
+import { Quicksand, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import Nav from "./components/Nav";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -7,9 +8,15 @@ const quicksand = Quicksand({
   display: "swap",
 });
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
 export const metadata = {
-  title: "Will You Be My Valentine? (forever....) 💖",
-  description: "A special pixel-art Valentine's message just for you.",
+  title: "Grishma & Saket 💖",
+  description: "A special place for all our memories, notes, and photos.",
   icons: {
     icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>",
   },
@@ -18,14 +25,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className={quicksand.variable}>
-        {children}
+      <body className={`${quicksand.variable} ${playfair.variable}`}>
+        <Nav />
+        <main className="page-content">
+          {children}
+        </main>
       </body>
     </html>
   );
