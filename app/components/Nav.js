@@ -1,18 +1,36 @@
 import Link from 'next/link';
+import { getUserRole, logout } from '../actions';
 import './Nav.css';
 
-export default function Nav() {
+export default async function Nav() {
+  const userRole = await getUserRole();
+  const isLoggedIn = !!userRole;
+  const isAdmin = userRole === 'admin';
+
   return (
     <nav className="main-nav">
       <div className="nav-container">
-        <Link href="/" className="nav-logo">
+        <Link href={isLoggedIn ? "/home" : "/"} className="nav-logo">
           ✨ Grishma & Saket
         </Link>
-        <div className="nav-links">
-          <Link href="/album" className="nav-link">Album</Link>
-          <Link href="/notes" className="nav-link">Notes</Link>
-        </div>
+        
+        {isLoggedIn && (
+          <div className="nav-links">
+            <Link href="/diary" className="nav-link">Diary</Link>
+            <Link href="/album" className="nav-link">Album</Link>
+
+            {isAdmin && (
+              <Link href="/admin" className="nav-link nav-admin-link">Admin ⚙️</Link>
+            )}
+            <form action={logout} className="logout-form">
+              <button type="submit" className="logout-btn">
+                Logout 🚪
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </nav>
   );
 }
+

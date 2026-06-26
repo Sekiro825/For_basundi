@@ -5,7 +5,6 @@ import { addLoveNote, addAlbumPhoto } from './actions';
 import './admin.css';
 
 export default function AdminPage() {
-  const [password, setPassword] = useState('');
   const [status, setStatus] = useState({ message: '', type: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -16,7 +15,6 @@ export default function AdminPage() {
     
     try {
       const formData = new FormData(e.target);
-      formData.append('password', password);
       await addLoveNote(formData);
       setStatus({ message: 'Note added successfully! 💌', type: 'success' });
       e.target.reset();
@@ -34,7 +32,6 @@ export default function AdminPage() {
     
     try {
       const formData = new FormData(e.target);
-      formData.append('password', password);
       await addAlbumPhoto(formData);
       setStatus({ message: 'Photo added to album! 📸', type: 'success' });
       e.target.reset();
@@ -46,20 +43,9 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="admin-page">
+    <div className="admin-page fade-in">
       <h1 className="admin-header">Admin Panel</h1>
       <p className="admin-sub">For Saket's eyes only 👀</p>
-
-      <div className="password-section">
-        <label>Admin Password:</label>
-        <input 
-          type="password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          placeholder="Enter password to enable saving"
-          className="admin-input"
-        />
-      </div>
 
       {status.message && (
         <div className={`status-message ${status.type}`}>
@@ -71,15 +57,24 @@ export default function AdminPage() {
         {/* ADD NOTE FORM */}
         <div className="admin-card">
           <h2>Write a Love Note 💌</h2>
-          <form onSubmit={handleNoteSubmit}>
+          <form onSubmit={handleNoteSubmit} encType="multipart/form-data">
             <div className="form-group">
               <label>Title</label>
               <input type="text" name="title" required className="admin-input" placeholder="e.g. Thinking of you" />
             </div>
             
-            <div className="form-group">
-              <label>Date (Optional)</label>
-              <input type="date" name="note_date" className="admin-input" />
+            <div className="form-row">
+              <div className="form-group">
+                <label>Date (Optional)</label>
+                <input type="date" name="note_date" className="admin-input" />
+              </div>
+              <div className="form-group">
+                <label>Category</label>
+                <select name="category" className="admin-input">
+                  <option value="monthly">Every Month</option>
+                  <option value="special_occasion">Special Occasion</option>
+                </select>
+              </div>
             </div>
             
             <div className="form-row">
@@ -104,10 +99,16 @@ export default function AdminPage() {
               <label>Content</label>
               <textarea name="content" required rows="6" className="admin-input" placeholder="Write your heart out..."></textarea>
             </div>
+
+            <div className="form-group">
+              <label>Attach Photo (Optional)</label>
+              <input type="file" name="file" accept="image/*" className="admin-input" />
+            </div>
             
-            <button type="submit" disabled={isSubmitting || !password} className="admin-btn">
+            <button type="submit" disabled={isSubmitting} className="admin-btn">
               Save Note
             </button>
+
           </form>
         </div>
 
@@ -125,12 +126,21 @@ export default function AdminPage() {
               <input type="text" name="caption" className="admin-input" placeholder="e.g. Our first date at..." />
             </div>
             
-            <div className="form-group">
-              <label>Date taken (Optional)</label>
-              <input type="date" name="photo_date" className="admin-input" />
+            <div className="form-row">
+              <div className="form-group">
+                <label>Date taken (Optional)</label>
+                <input type="date" name="photo_date" className="admin-input" />
+              </div>
+              <div className="form-group">
+                <label>Category</label>
+                <select name="category" className="admin-input">
+                  <option value="monthly">Every Month</option>
+                  <option value="special_occasion">Special Occasion</option>
+                </select>
+              </div>
             </div>
             
-            <button type="submit" disabled={isSubmitting || !password} className="admin-btn">
+            <button type="submit" disabled={isSubmitting} className="admin-btn">
               Upload Photo
             </button>
           </form>

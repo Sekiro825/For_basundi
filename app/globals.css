@@ -8,6 +8,8 @@
   --text-dark: #3E2723;
   --text-light: #5D4037;
   --paper-bg: #FFFDF8;
+  --notebook-line: #E1F5FE;
+  --notebook-margin: #FFCDD2;
 }
 
 * {
@@ -38,10 +40,6 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--wine);
 }
 
-.page-content {
-  padding-top: 70px;
-}
-
 /* === SHARED UTILITIES === */
 .fade-in {
   opacity: 0;
@@ -65,44 +63,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* === HERO SECTION === */
-.hero-section {
-  min-height: calc(100vh - 70px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-title {
-  font-size: 4.5rem;
-  font-style: italic;
-  margin-bottom: 1rem;
-  z-index: 10;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
-  animation: slideUp 1.2s ease;
-}
-
-.hero-subtitle {
-  font-size: 1.5rem;
-  color: var(--text-light);
-  max-width: 600px;
-  line-height: 1.6;
-  z-index: 10;
-  animation: slideUp 1.2s ease 0.3s forwards;
-  opacity: 0;
-}
-
-.hero-subtitle span {
-  color: var(--mauve);
-  font-weight: 600;
-  font-style: italic;
-}
-
 /* === FLOATING DUST === */
 .dust-particle {
   position: absolute;
@@ -114,119 +74,606 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes float {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.6; }
+  100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+}
+
+/* ==========================================
+   NEW LOGIN PAGE — DARK ROMANTIC THEME
+   ========================================== */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  /* Dark moody gradient */
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(88, 28, 135, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(157, 23, 77, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(30, 27, 75, 0.15) 0%, transparent 70%),
+    linear-gradient(135deg, #0c0a1a 0%, #1a0e2e 25%, #120c20 50%, #1e0a28 75%, #0d0a18 100%);
+}
+
+/* Floating Hearts */
+.hearts-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.floating-heart {
+  position: absolute;
+  bottom: -50px;
+  animation: heartFloat linear infinite;
+  filter: blur(0.5px);
+}
+
+@keyframes heartFloat {
   0% {
-    transform: translateY(0) scale(1);
+    transform: translateY(0) rotate(0deg) scale(1);
     opacity: 0;
   }
-  20% {
-    opacity: 0.6;
+  10% {
+    opacity: var(--heart-opacity, 0.3);
   }
-  80% {
-    opacity: 0.6;
+  50% {
+    transform: translateY(-50vh) rotate(180deg) scale(1.1);
+  }
+  90% {
+    opacity: var(--heart-opacity, 0.3);
   }
   100% {
-    transform: translateY(-100vh) scale(0.5);
+    transform: translateY(-110vh) rotate(360deg) scale(0.8);
     opacity: 0;
   }
 }
 
-/* === CHAPTERS SECTION === */
-.chapters-section {
-  padding: 6rem 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
+/* Sparkle Particles */
+.sparkles-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.chapter-title {
+.sparkle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: sparkleAnim ease-in-out infinite;
+}
+
+@keyframes sparkleAnim {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 0.8; transform: scale(1); }
+}
+
+/* Glassmorphic Card */
+.login-glass-card {
+  position: relative;
+  z-index: 10;
+  max-width: 440px;
+  width: 100%;
+  padding: 3rem 2.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
   text-align: center;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.login-fade-in {
+  animation: loginCardAppear 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes loginCardAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Glow Orbs (decorative) */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glow-orb-1 {
+  width: 200px;
+  height: 200px;
+  background: rgba(236, 72, 153, 0.2);
+  top: -60px;
+  right: -60px;
+}
+
+.glow-orb-2 {
+  width: 180px;
+  height: 180px;
+  background: rgba(139, 92, 246, 0.15);
+  bottom: -50px;
+  left: -50px;
+}
+
+/* Couple Photo Frame */
+.couple-photo-frame {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+}
+
+.couple-photo-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(139, 92, 246, 0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.couple-photo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.photo-heart-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 8px rgba(236, 72, 153, 0.5));
+}
+
+.photo-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6, #06b6d4) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ringRotate 6s linear infinite;
+  z-index: 3;
+}
+
+@keyframes ringRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Login Header */
+.login-label {
+  font-size: 0.9rem;
+  color: rgba(196, 181, 253, 0.8);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.login-hero-title {
   font-size: 2.5rem;
-  margin-bottom: 4rem;
+  font-style: italic;
+  background: linear-gradient(135deg, #f9a8d4, #c4b5fd, #93c5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.login-hero-sub {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.95rem;
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
+
+/* Divider */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+}
+
+.divider-heart {
+  color: rgba(236, 72, 153, 0.5);
+  font-size: 0.85rem;
+}
+
+/* Form */
+.login-form-new {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-wrapper {
   position: relative;
 }
 
-.chapter-title::after {
-  content: '〰';
-  display: block;
-  font-size: 2rem;
-  color: var(--gold);
-  margin-top: 0.5rem;
+.login-glass-input {
+  width: 100%;
+  padding: 1rem 1.2rem 1rem 3rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  letter-spacing: 0.5px;
 }
 
-.chapters-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+.login-glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
 }
 
-.chapter-card {
-  background: var(--paper-bg);
-  border: 1px solid var(--blush);
-  padding: 3rem 2rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.4s ease;
+.login-glass-input:focus {
+  border-color: rgba(236, 72, 153, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.1);
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+/* Button */
+.login-glow-btn {
+  padding: 1rem;
+  font-size: 1.05rem;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: var(--font-playfair), serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.chapter-card::before {
+.login-glow-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.login-glow-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+}
+
+.login-glow-btn:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.login-glow-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading Dots */
+.btn-loading {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(2) { animation-delay: 0.15s; }
+.loading-dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Error */
+.login-error-msg {
+  color: #fca5a5;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Footer */
+.login-footer-text {
+  margin-top: 1.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
+}
+
+/* ==========================================
+   NOTEBOOK UI (unchanged from original)
+   ========================================== */
+.notebook-wrapper {
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notebook-container {
+  width: 100%;
+  max-width: 900px;
+  height: 85vh;
+  background: var(--paper-bg);
+  border-radius: 4px 16px 16px 4px;
+  box-shadow: 15px 15px 40px rgba(0,0,0,0.08), inset -5px 0 20px rgba(0,0,0,0.02);
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+/* The spiral binding left edge */
+.notebook-binding {
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, #e0e0e0, #f5f5f5, #e0e0e0);
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 2rem 0;
+  z-index: 5;
+}
+
+.spiral-hole {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #333;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.spiral-ring {
+  position: absolute;
+  width: 25px;
+  height: 6px;
+  background: linear-gradient(to bottom, #d4af37, #f3e5ab, #d4af37);
+  border-radius: 3px;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+}
+
+/* The lined paper */
+.notebook-paper {
+  flex: 1;
+  background-image: linear-gradient(var(--notebook-line) 1px, transparent 1px);
+  background-size: 100% 2rem;
+  background-position: 0 3rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.notebook-paper::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--rose), var(--mauve));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
+  bottom: 0;
+  left: 3rem;
+  width: 2px;
+  background: var(--notebook-margin);
+  z-index: 0;
 }
 
-.chapter-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(194, 24, 91, 0.1);
+/* Notebook Header & Tabs */
+.notebook-header {
+  padding: 2rem 2rem 1rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid var(--notebook-line);
+  z-index: 1;
+  background: var(--paper-bg);
 }
 
-.chapter-card:hover::before {
-  transform: scaleX(1);
+.notebook-title {
+  font-size: 2.5rem;
+  margin: 0;
+  font-style: italic;
+  color: var(--wine);
 }
 
-.chapter-card h3 {
-  font-size: 2rem;
+.notebook-tabs {
+  display: flex;
+  gap: 0.5rem;
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: left top;
+}
+
+.notebook-tab {
+  padding: 0.5rem 1.5rem;
+  background: var(--cream);
+  border: 1px solid var(--blush);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-family: var(--font-playfair), serif;
+  color: var(--text-light);
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.notebook-tab.active {
+  background: var(--paper-bg);
+  color: var(--wine);
+  border-color: var(--rose);
+  padding-bottom: 0.8rem;
+  margin-bottom: -0.3rem;
+}
+
+.notebook-content {
+  flex: 1;
+  padding: 1rem 2rem 2rem 4rem;
+  overflow-y: auto;
+  z-index: 1;
+  position: relative;
+}
+
+/* Entries inside notebook */
+.notebook-entry {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px dashed var(--rose);
+  border-radius: 8px;
+  transform: rotate(-1deg);
+  transition: transform 0.3s;
+}
+
+.notebook-entry:nth-child(even) {
+  transform: rotate(1deg);
+}
+
+.notebook-entry:hover {
+  transform: rotate(0deg) scale(1.02);
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
 }
 
-.chapter-card p {
+.entry-date {
+  font-family: var(--font-quicksand);
+  font-size: 0.9rem;
   color: var(--text-light);
-  line-height: 1.6;
+  font-weight: 600;
 }
 
-.chapter-icon {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
-  display: inline-block;
-  transition: transform 0.4s ease;
+.entry-title {
+  font-size: 1.5rem;
+  margin: 0;
 }
 
-.chapter-card:hover .chapter-icon {
-  transform: scale(1.1) rotate(5deg);
+.entry-body {
+  line-height: 2rem; /* Aligns with notebook lines */
+  font-size: 1.1rem;
+  white-space: pre-wrap;
 }
 
-/* === RESPONSIVE === */
+.entry-photo {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 4px;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+  margin-top: 1rem;
+  border: 6px solid #fff;
+  transform: rotate(2deg);
+}
+
+.entry-photo-caption {
+  font-family: var(--font-playfair), serif;
+  font-style: italic;
+  text-align: center;
+  margin-top: 0.5rem;
+  color: var(--text-light);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 3rem;
+  .login-glass-card {
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
   }
-  
-  .hero-subtitle {
-    font-size: 1.2rem;
+  .login-hero-title {
+    font-size: 2rem;
   }
-  
-  .chapters-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .couple-photo-frame {
+    width: 100px;
+    height: 100px;
   }
+  .couple-photo-placeholder {
+    width: 100px;
+    height: 100px;
+  }
+  .photo-heart-icon {
+    font-size: 2.5rem;
+  }
+  .notebook-container { height: 95vh; flex-direction: column; border-radius: 8px; }
+  .notebook-binding { width: 100%; height: 30px; flex-direction: row; border-right: none; border-bottom: 1px solid #ccc; padding: 0 2rem; }
+  .spiral-ring { width: 6px; height: 25px; left: 50%; top: -5px; transform: translateX(-50%); background: linear-gradient(to right, #d4af37, #f3e5ab, #d4af37); }
+  .notebook-tabs { position: static; transform: none; flex-wrap: wrap; justify-content: center; padding: 1rem; border-bottom: 2px solid var(--notebook-line); }
+  .notebook-tab { border-radius: 20px; border-bottom: 1px solid var(--blush); }
+  .notebook-tab.active { margin-bottom: 0; padding-bottom: 0.5rem; background: var(--rose); color: white; }
+  .notebook-paper::before { left: 1rem; }
+  .notebook-header { padding: 1rem 1rem 0.5rem 1.5rem; flex-direction: column; align-items: flex-start; }
+  .notebook-content { padding: 1rem 1rem 1rem 1.5rem; }
 }

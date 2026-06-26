@@ -141,7 +141,19 @@ label {
 }
 
 @media (max-width: 768px) {
+  .admin-page {
+    padding: 2rem 1rem;
+  }
+  .admin-header {
+    font-size: 2.2rem;
+  }
   .admin-forms {
+    grid-template-columns: 1fr;
+  }
+  .admin-card {
+    padding: 1.5rem;
+  }
+  .form-row {
     grid-template-columns: 1fr;
   }
 }
