@@ -246,6 +246,13 @@
   font-size: 1.3rem;
 }
 
+.diary-write-time {
+  font-size: 0.8rem;
+  color: #b0a89e;
+  font-style: italic;
+  letter-spacing: 0.3px;
+}
+
 .diary-entry-title {
   font-size: 1.8rem;
   margin-bottom: 1rem;

@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Lane Selector 💖 For Grishma & Saket</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Segoe+Print&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f080a;
+            --panel-bg: rgba(26, 15, 18, 0.7);
+            --border-color: rgba(219, 112, 147, 0.15);
+            --accent-primary: #db407a;
+            --accent-glow: rgba(219, 64, 122, 0.4);
+            --accent-gold: #e5c158;
+            --accent-cyan: #40c0cb;
+            --text-main: #f5eff1;
+            --text-muted: #bfaeb4;
+            --card-bg: rgba(38, 22, 26, 0.85);
+            --card-hover-border: rgba(219, 112, 147, 0.5);
+            
+            --font-display: 'Playfair Display', serif;
+            --font-sans: 'Outfit', sans-serif;
+            --font-hand: 'Segoe Print', 'Comic Sans MS', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(120, 30, 60, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(40, 20, 80, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* Webkit scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(219, 112, 147, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+
+        header {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title-container h1 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #fff 30%, #ff85a2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .heart-icon {
+            font-size: 1.8rem;
+            animation: beat 1.5s infinite alternate;
+            display: inline-block;
+        }
+
+        @keyframes beat {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); filter: drop-shadow(0 0 8px var(--accent-primary)); }
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.3);
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item span {
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            font-family: var(--font-sans);
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #a82050 100%);
+            color: white;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-primary);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-primary);
+        }
+
+        /* Filters and Dashboard Controls */
+        .controls-container {
+            max-width: 1400px;
+            margin: 2rem auto 1rem;
+            padding: 0 2rem;
+        }
+
+        .filter-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            min-width: 280px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1.2rem 0.8rem 2.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: white;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px rgba(219, 64, 122, 0.25);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.95rem;
+            opacity: 0.6;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.1rem;
+            border-radius: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(219, 112, 147, 0.15);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .checkbox-container input:checked + .custom-checkbox {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .checkbox-container input:checked + .custom-checkbox::after {
+            content: "✓";
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Photos Grid */
+        .grid-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem 5rem;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 25px;
+        }
+
+        .photo-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 10px 30px rgba(219, 112, 147, 0.15);
+        }
+
+        .photo-card.selected {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(219, 64, 122, 0.2);
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1; /* Keep it square like a polaroid photo preview */
+            background: #000;
+            overflow: hidden;
+            cursor: zoom-in;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-card:hover .image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .media-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .approve-check-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            border: 2px solid white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            color: transparent;
+            z-index: 10;
+        }
+
+        .approve-check-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0,0,0,0.8);
+        }
+
+        .photo-card.selected .approve-check-btn {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+
+        /* Card Content Controls */
+        .card-controls {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(0,0,0,0.15);
+            flex-grow: 1;
+        }
+
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .caption-input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            padding: 8px 12px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .caption-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .date-input {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            padding: 6px 10px;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+        }
+
+        /* Tags list selection */
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tag-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .tag-pill:hover {
+            border-color: rgba(219, 112, 147, 0.4);
+            color: white;
+        }
+
+        .tag-pill.active {
+            background: rgba(219, 112, 147, 0.15);
+            border-color: var(--accent-primary);
+            color: #ff85a2;
+            font-weight: 600;
+        }
+
+        /* Preset Styles toggle */
+        .style-toggle-container {
+            display: flex;
+            gap: 6px;
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .style-toggle-btn {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .style-toggle-btn.active {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .style-toggle-btn.active.style-2 {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        .style-toggle-btn.active.style-3 {
+            background: var(--accent-cyan);
+            color: #000;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(26, 15, 18, 0.95);
+            border: 1px solid var(--accent-primary);
+            border-radius: 12px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Lightbox modal */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 5, 7, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .lightbox-media {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .lightbox-close:hover {
+            opacity: 1;
+        }
+
+        .lightbox-caption {
+            color: white;
+            font-family: var(--font-hand);
+            font-size: 1.4rem;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Empty state */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 5rem 2rem;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            color: var(--text-muted);
+        }
+
+        .empty-state h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        /* Loader */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            gap: 15px;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-heart {
+            font-size: 3rem;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); }
+            100% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading screen -->
+    <div class="loader-container" id="loader">
+        <div class="loader-heart">💖</div>
+        <p style="font-family: var(--font-display); font-size: 1.2rem; color: var(--accent-primary);">Opening Memory Lane...</p>
+    </div>
+
+    <header>
+        <div class="header-title-container">
+            <span class="heart-icon">💖</span>
+            <h1>Memory Lane Selector</h1>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-item">Total: <span id="stat-total">0</span></div>
+            <div class="stat-item">Approved: <span id="stat-approved" style="color: var(--accent-primary);">0</span></div>
+            <div class="stat-item">Fav Style 1: <span id="stat-style-1" style="color: var(--accent-primary);">0</span></div>
+            <div class="stat-item">Fav Style 2: <span id="stat-style-2" style="color: var(--accent-gold);">0</span></div>
+            <div class="stat-item">Fav Style 3: <span id="stat-style-3" style="color: var(--accent-cyan);">0</span></div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="exportData()">💾 Export JSON</button>
+            <button class="btn btn-primary" onclick="saveSelections()">✨ Save Selections</button>
+        </div>
+    </header>
+
+    <div class="controls-container">
+        <div class="filter-panel">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search filename, date, caption..." oninput="applyFilters()">
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active" data-category="all" onclick="setCategoryFilter('all')">All Files</button>
+                <button class="filter-btn" data-category="screenshot" onclick="setCategoryFilter('screenshot')">Screenshots</button>
+                <button class="filter-btn" data-category="snapchat" onclick="setCategoryFilter('snapchat')">Snapchat</button>
+                <button class="filter-btn" data-category="whatsapp_or_camera" onclick="setCategoryFilter('whatsapp_or_camera')">WhatsApp/Camera</button>
+                <button class="filter-btn" data-category="video" onclick="setCategoryFilter('video')">Videos</button>
+            </div>
+            <label class="checkbox-container">
+                <input type="checkbox" id="show-selected-only" onchange="applyFilters()">
+                <span class="custom-checkbox"></span>
+                Show Approved Only
+            </label>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="photos-grid" id="photos-grid">
+            <!-- Dynamic elements loaded via JS -->
+        </div>
+    </div>
+
+    <!-- Toast message -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✨</span>
+        <span class="toast-text" id="toast-text">Selections saved successfully!</span>
+    </div>
+
+    <!-- Lightbox modal -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <div id="lightbox-media-container"></div>
+            <p class="lightbox-caption" id="lightbox-caption"></p>
+        </div>
+    </div>
+
+    <script>
+        let photosData = [];
+        let activeCategory = 'all';
+        const availableTags = ["Cute Smile", "Adorable Chat", "Hand Drawing", "Bouquet", "Funny Face", "Romantic", "Late Night"];
+
+        // Initial Load
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/photos');
+                photosData = await res.json();
+                
+                // Hide loader
+                const loader = document.getElementById('loader');
+                loader.style.opacity = 0;
+                setTimeout(() => loader.style.display = 'none', 500);
+                
+                renderGrid();
+                updateStats();
+            } catch (err) {
+                console.error("Failed to load photos:", err);
+                alert("Error loading photo metadata. Make sure python serve_photos.py is running!");
+            }
+        });
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = photosData.length;
+            const approved = photosData.filter(p => p.selected);
+            document.getElementById('stat-approved').innerText = approved.length;
+            
+            document.getElementById('stat-style-1').innerText = approved.filter(p => p.style_mode === 1).length;
+            document.getElementById('stat-style-2').innerText = approved.filter(p => p.style_mode === 2).length;
+            document.getElementById('stat-style-3').innerText = approved.filter(p => p.style_mode === 3).length;
+        }
+
+        function setCategoryFilter(category) {
+            activeCategory = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            renderGrid();
+        }
+
+        function toggleSelection(index) {
+            photosData[index].selected = !photosData[index].selected;
+            const card = document.getElementById(`card-${index}`);
+            if (photosData[index].selected) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+            updateStats();
+        }
+
+        function handleCaptionChange(index, value) {
+            photosData[index].caption = value;
+        }
+
+        function handleDateChange(index, value) {
+            photosData[index].custom_date = value;
+        }
+
+        function handleRotationChange(index, value) {
+            photosData[index].rotation = parseInt(value, 10);
+            
+            // Optionally apply rotation transform preview to image
+            const img = document.querySelector(`#card-${index} .image-wrapper img`);
+            if (img) {
+                img.style.transform = `scale(1.05) rotate(${-value}deg)`;
+            }
+        }
+
+        function toggleTag(photoIndex, tag) {
+            const photo = photosData[photoIndex];
+            const tagIndex = photo.tags.indexOf(tag);
+            if (tagIndex > -1) {
+                photo.tags.splice(tagIndex, 1);
+            } else {
+                photo.tags.push(tag);
+            }
+            
+            // Re-render tag group in card
+            const tagContainer = document.getElementById(`tags-${photoIndex}`);
+            tagContainer.innerHTML = renderTagsHTML(photoIndex, photo.tags);
+            updateStats();
+        }
+
+        function setStyleMode(photoIndex, styleMode) {
+            photosData[photoIndex].style_mode = styleMode;
+            
+            // Update active states
+            const buttons = document.querySelectorAll(`#style-toggle-${photoIndex} button`);
+            buttons.forEach((btn, idx) => {
+                if (idx + 1 === styleMode) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateStats();
+        }
+
+        function renderTagsHTML(photoIndex, activeTags = []) {
+            return availableTags.map(tag => {
+                const isActive = activeTags.includes(tag);
+                return `<span class="tag-pill ${isActive ? 'active' : ''}" onclick="toggleTag(${photoIndex}, '${tag}')">${tag}</span>`;
+            }).join('');
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('photos-grid');
+            grid.innerHTML = '';
+
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            const showSelectedOnly = document.getElementById('show-selected-only').checked;
+
+            const filtered = photosData.map((photo, index) => ({ photo, index })).filter(({ photo }) => {
+                // Category Filter
+                if (activeCategory !== 'all' && photo.category !== activeCategory) {
+                    return false;
+                }
+                
+                // Show Approved Only Filter
+                if (showSelectedOnly && !photo.selected) {
+                    return false;
+                }
+
+                // Search Filter
+                if (searchQuery) {
+                    const fname = photo.filename.toLowerCase();
+                    const caption = (photo.caption || '').toLowerCase();
+                    const date = (photo.custom_date || '').toLowerCase();
+                    const tags = (photo.tags || []).join(' ').toLowerCase();
+                    if (!fname.includes(searchQuery) && !caption.includes(searchQuery) && !date.includes(searchQuery) && !tags.includes(searchQuery)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Memories Found</h3>
+                        <p>Try clearing your search query or filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(({ photo, index }) => {
+                const isSelected = photo.selected;
+                const isVideo = photo.filename.endsWith('.mp4');
+                const card = document.createElement('div');
+                card.id = `card-${index}`;
+                card.className = `photo-card ${isSelected ? 'selected' : ''}`;
+                
+                // Render card layout
+                card.innerHTML = `
+                    <div class="image-wrapper" onclick="openLightbox('${photo.filename}', '${photo.caption || ''}')">
+                        ${isVideo ? 
+                            `<video src="${photo.filename}" muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                             <div class="media-badge">🎬 Video</div>` :
+                            `<img src="${photo.filename}" alt="${photo.filename}" loading="lazy" style="${photo.rotation ? `transform: scale(1.05) rotate(${-photo.rotation}deg);` : ''}">`
+                        }
+                        <button class="approve-check-btn" onclick="event.stopPropagation(); toggleSelection(${index})">✓</button>
+                    </div>
+                    <div class="card-controls">
+                        <div class="card-meta-row">
+                            <span>${photo.filename.substring(0, 24)}${photo.filename.length > 24 ? '...' : ''}</span>
+                            <span>${photo.width ? `${photo.width}x${photo.height}` : ''} | ${photo.size_kb}KB</span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Caption</label>
+                            <input type="text" class="caption-input" placeholder="Sweet caption..." value="${photo.caption || ''}" oninput="handleCaptionChange(${index}, this.value)">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Memory Date</label>
+                            <input type="date" class="date-input" value="${photo.custom_date || ''}" onchange="handleDateChange(${index}, this.value)">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Tags</label>
+                            <div class="tag-selector" id="tags-${index}">
+                                ${renderTagsHTML(index, photo.tags)}
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Rotate Image</label>
+                            <select class="caption-input" onchange="handleRotationChange(${index}, this.value)" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; color: white; padding: 6px 10px; font-family: var(--font-sans); font-size: 0.85rem;">
+                                <option value="0" ${photo.rotation === 0 ? 'selected' : ''}>0° (Upright)</option>
+                                <option value="90" ${photo.rotation === 90 ? 'selected' : ''}>90° CCW (Left)</option>
+                                <option value="180" ${photo.rotation === 180 ? 'selected' : ''}>180°</option>
+                                <option value="270" ${photo.rotation === 270 ? 'selected' : ''}>90° CW (Right)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Polaroid Style Mode</label>
+                            <div class="style-toggle-container" id="style-toggle-${index}">
+                                <button class="style-toggle-btn ${photo.style_mode === 1 ? 'active' : ''}" onclick="setStyleMode(${index}, 1)">1. Rose-Gold</button>
+                                <button class="style-toggle-btn style-2 ${photo.style_mode === 2 ? 'active' : ''}" onclick="setStyleMode(${index}, 2)">2. Retro</button>
+                                <button class="style-toggle-btn style-3 ${photo.style_mode === 3 ? 'active' : ''}" onclick="setStyleMode(${index}, 3)">3. Cyberpunk</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Lightbox modal actions
+        function openLightbox(filename, caption) {
+            const lightbox = document.getElementById('lightbox');
+            const container = document.getElementById('lightbox-media-container');
+            const cap = document.getElementById('lightbox-caption');
+            
+            container.innerHTML = '';
+            
+            if (filename.endsWith('.mp4')) {
+                container.innerHTML = `<video src="${filename}" controls autoplay class="lightbox-media"></video>`;
+            } else {
+                container.innerHTML = `<img src="${filename}" class="lightbox-media">`;
+            }
+            
+            cap.innerText = caption || 'Cute Couple Memory';
+            lightbox.classList.add('open');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('open');
+            // Stop video playing in background
+            const container = document.getElementById('lightbox-media-container');
+            container.innerHTML = '';
+        }
+
+        // Save selection back to local Python Server
+        async function saveSelections() {
+            const selectedOnly = photosData.filter(p => p.selected).map(p => ({
+                filename: p.filename,
+                selected: p.selected,
+                caption: p.caption,
+                tags: p.tags,
+                style_mode: p.style_mode,
+                custom_date: p.custom_date,
+                rotation: p.rotation
+            }));
+
+            try {
+                const res = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedOnly)
+                });
+                
+                const result = await res.json();
+                if (result.success) {
+                    showToast("Selections saved successfully! ✨");
+                } else {
+                    showToast("Error saving selections! ❌");
+                }
+            } catch (err) {
+                console.error("Save failed:", err);
+                showToast("Save failed! Check server console. ❌");
+            }
+        }
+
+        function exportData() {
+            const selectedOnly = photosData.filter(p => p.selected).map(p => ({
+                filename: p.filename,
+                selected: p.selected,
+                caption: p.caption,
+                tags: p.tags,
+                style_mode: p.style_mode,
+                custom_date: p.custom_date,
+                rotation: p.rotation
+            }));
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(selectedOnly, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "selected_moments.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = text;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

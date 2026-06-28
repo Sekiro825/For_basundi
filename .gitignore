@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Couple photos and generated prints
+/collage photos/*.jpg
+/collage photos/*.png
+/collage photos/*.mp4
+/collage photos/final_instax_prints/
+/collage photos/processed_instax/
+
