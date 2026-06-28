@@ -514,3 +514,41 @@
   background: #fff0f3;
   transform: translateY(-2px);
 }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .print-page {
+    padding: 90px 16px 40px; /* top clears the fixed nav */
+    min-height: calc(100vh - 70px);
+  }
+  .print-title { font-size: 2rem; }
+  .print-sub { font-size: 0.95rem; }
+
+  .instax-camera {
+    width: 100%;
+    max-width: 360px;
+    padding: 24px 18px 16px;
+    border-radius: 32px;
+  }
+  .camera-print-slot { width: 78%; }
+  .printer-track { width: 100%; max-width: 320px; }
+
+  .print-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 320px;
+  }
+  .btn-save,
+  .btn-reset { width: 100%; }
+
+  /* prevent iOS zoom-on-focus */
+  .camera-caption-input { font-size: 16px; }
+}
+
+@media (max-width: 380px) {
+  .camera-lens { width: 170px; height: 170px; }
+  .camera-lens-glass { width: 145px; height: 145px; }
+  .instax-camera { max-width: 300px; }
+  .camera-brand-text { font-size: 1.1rem; }
+}

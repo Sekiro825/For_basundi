@@ -667,7 +667,8 @@ h1, h2, h3, h4, h5, h6 {
   .photo-heart-icon {
     font-size: 2.5rem;
   }
-  .notebook-container { height: 95vh; flex-direction: column; border-radius: 8px; }
+  .notebook-wrapper { padding: 84px 0.5rem 1rem; align-items: stretch; }
+  .notebook-container { height: calc(100vh - 100px); flex-direction: column; border-radius: 8px; }
   .notebook-binding { width: 100%; height: 30px; flex-direction: row; border-right: none; border-bottom: 1px solid #ccc; padding: 0 2rem; }
   .spiral-ring { width: 6px; height: 25px; left: 50%; top: -5px; transform: translateX(-50%); background: linear-gradient(to right, #d4af37, #f3e5ab, #d4af37); }
   .notebook-tabs { position: static; transform: none; flex-wrap: wrap; justify-content: center; padding: 1rem; border-bottom: 2px solid var(--notebook-line); }

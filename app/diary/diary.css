@@ -536,9 +536,10 @@
 
 @media (max-width: 768px) {
   .diary-page {
-    padding: 1rem 0.5rem;
+    padding: 90px 0.5rem 2rem;
     min-height: calc(100vh - 70px);
   }
+  .book-action-btn { width: 100%; max-width: 320px; }
   
   .book-wrapper {
     gap: 0.5rem;

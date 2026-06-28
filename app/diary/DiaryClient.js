@@ -87,8 +87,17 @@ export default function DiaryClient({ notes, userRole }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWriteForm, setShowWriteForm] = useState(false);
   const [status, setStatus] = useState('');
-  
+  const [isMobile, setIsMobile] = useState(false);
+
   const bookRef = useRef();
+
+  // On phones, show a single page (portrait) instead of a cramped two-page spread.
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Navigate to the saved page after flipbook remounts (e.g. after adding a new entry)
   useEffect(() => {
@@ -175,18 +184,18 @@ export default function DiaryClient({ notes, userRole }) {
 
         <div className="book-container">
           <HTMLFlipBook
-            key={notes.length}
-            width={600}
-            height={750}
+            key={`${notes.length}-${isMobile ? 'p' : 'l'}`}
+            width={isMobile ? 330 : 600}
+            height={isMobile ? 520 : 750}
             size="stretch"
-            minWidth={315}
+            minWidth={300}
             maxWidth={1000}
             minHeight={400}
             maxHeight={1000}
             maxShadowOpacity={0.5}
             showCover={true}
             mobileScrollSupport={true}
-            usePortrait={false}
+            usePortrait={isMobile}
             className="diary-flipbook"
             ref={bookRef}
             useMouseEvents={false}
