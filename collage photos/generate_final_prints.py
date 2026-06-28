@@ -159,15 +159,12 @@ def apply_style_1(photo_img, caption, date_label):
     # Text (Segoe Print / Handwriting)
     try:
         f_caption = ImageFont.truetype(font_path_segoe, 38)
-        f_date = ImageFont.truetype(font_path_segoe, 20)
     except:
-        f_caption = f_date = ImageFont.load_default()
+        f_caption = ImageFont.load_default()
         
     cap_w = draw.textlength(caption, font=f_caption) if hasattr(draw, "textlength") else 200
-    date_w = draw.textlength(date_label, font=f_date) if hasattr(draw, "textlength") else 100
     
-    draw.text((400 - cap_w//2, 780), caption, fill=(80, 40, 50, 255), font=f_caption)
-    draw.text((400 - date_w//2, 850), date_label, fill=(180, 140, 150, 255), font=f_date)
+    draw.text((400 - cap_w//2, 815), caption, fill=(80, 40, 50, 255), font=f_caption)
     
     return card.convert("RGB")
 
@@ -191,10 +188,6 @@ def apply_style_2(photo_img, caption, date_label, date_stamp):
     noise_tile.putdata([int(random.gauss(128, 10)) for _ in range(128 * 128)])
     noise_tile_rgb = noise_tile.resize((700, 700), Image.Resampling.NEAREST).convert("RGB")
     img = Image.blend(img, noise_tile_rgb, 0.07)
-    
-    # LCD Timestamp stamp
-    img = draw_datestamp(img, date_stamp)
-    
     # Assemble Card
     card = Image.new("RGB", (800, 980), (250, 248, 245)) # aged paper
     card.paste(img, (50, 50))
@@ -205,15 +198,12 @@ def apply_style_2(photo_img, caption, date_label, date_stamp):
     # Courier Typewriter Font
     try:
         f_caption = ImageFont.truetype(font_path_courier, 34)
-        f_date = ImageFont.truetype(font_path_courier, 18)
     except:
-        f_caption = f_date = ImageFont.load_default()
+        f_caption = ImageFont.load_default()
         
     cap_w = draw.textlength(caption, font=f_caption) if hasattr(draw, "textlength") else 200
-    date_w = draw.textlength(date_label, font=f_date) if hasattr(draw, "textlength") else 100
     
-    draw.text((400 - cap_w//2, 780), caption, fill=(40, 40, 40), font=f_caption)
-    draw.text((400 - date_w//2, 850), date_label, fill=(110, 110, 110), font=f_date)
+    draw.text((400 - cap_w//2, 815), caption, fill=(40, 40, 40), font=f_caption)
     
     return card
 
@@ -258,19 +248,15 @@ def apply_style_3(photo_img, caption, date_label):
     draw_sparkle(draw, 720, 760, 10, (255, 20, 147, 255)) # neon pink star
     draw_sparkle(draw, 90, 900, 12, (255, 20, 147, 255)) # neon pink star
     draw_sparkle(draw, 710, 890, 15, (64, 224, 208, 255)) # cyan star
-    
     # Text (Arial/Segoe Print) - styled in deep purple/black
     try:
         f_caption = ImageFont.truetype(font_path_arial, 36) if font_path_arial else ImageFont.load_default()
-        f_date = ImageFont.truetype(font_path_arial, 18) if font_path_arial else ImageFont.load_default()
     except:
-        f_caption = f_date = ImageFont.load_default()
+        f_caption = ImageFont.load_default()
         
     cap_w = draw.textlength(caption, font=f_caption) if hasattr(draw, "textlength") else 200
-    date_w = draw.textlength(date_label, font=f_date) if hasattr(draw, "textlength") else 100
     
-    draw.text((400 - cap_w//2, 780), caption, fill=(20, 10, 30, 255), font=f_caption)
-    draw.text((400 - date_w//2, 850), date_label, fill=(100, 120, 140, 255), font=f_date)
+    draw.text((400 - cap_w//2, 815), caption, fill=(20, 10, 30, 255), font=f_caption)
     
     return card.convert("RGB")
 

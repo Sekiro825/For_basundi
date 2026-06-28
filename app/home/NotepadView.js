@@ -53,9 +53,11 @@ export default function NotepadView({ initialEntries }) {
             filteredEntries.map((entry, index) => (
               <div key={`${entry.type}-${entry.id}`} className="notebook-entry">
                 <div className="entry-header">
-                  <span className="entry-date">
-                    {entry.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                  </span>
+                  {(entry.type === 'note' || entry.photo_date) && (
+                    <span className="entry-date">
+                      {entry.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </span>
+                  )}
                   {entry.type === 'note' && <span className="entry-flower">{entry.flower_emoji}</span>}
                 </div>
                 

@@ -1,114 +1,525 @@
-.album-page {
-  max-width: 1200px;
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+
+/* ============================================================
+   ALBUM — "OUR JOURNEY" WALL
+   A hangable gallery wall: bunting + fairy lights (patakas),
+   instax prints pinned along a winding journey thread.
+   ============================================================ */
+
+.journey-wall {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 4rem 2rem;
-}
-
-.album-header {
-  font-size: 3.5rem;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-.album-sub {
-  text-align: center;
-  color: var(--text-light);
-  margin-bottom: 5rem;
-  font-style: italic;
-  font-size: 1.2rem;
-}
-
-.album-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 3rem;
-  padding: 1rem;
-}
-
-.polaroid-card {
-  background: white;
-  padding: 15px 15px 25px 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-  transform: rotate(var(--tilt));
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 0 1.5rem 6rem;
   position: relative;
+  overflow: hidden;
+}
+
+/* ---------- PATAKAS: fairy lights + bunting ---------- */
+.patakas {
+  position: relative;
+  height: 90px;
+  margin: 0 -1.5rem 1rem;
+  pointer-events: none;
+}
+
+.fairy-string {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  /* draped wire */
+  background:
+    radial-gradient(120% 60px at 50% -30px, transparent 69%, rgba(120, 90, 60, 0.35) 70%, transparent 72%);
+}
+
+.fairy-bulb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: calc(8px + (var(--i, 0) % 4) * 4px); /* gentle sag */
+  background: #fff6c0;
+  box-shadow: 0 0 8px 3px rgba(255, 224, 130, 0.9);
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; box-shadow: 0 0 4px 1px rgba(255, 224, 130, 0.5); }
+  50% { opacity: 1; box-shadow: 0 0 12px 5px rgba(255, 224, 130, 1); }
+}
+
+.bunting {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.bunting-flag {
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 30px solid currentColor; /* color set inline via background? use border */
+  transform-origin: top center;
+  animation: flutter 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.12));
+}
+/* The inline style sets `background`; convert it into the triangle color */
+.bunting-flag {
+  border-top-color: currentColor;
+}
+
+@keyframes flutter {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+/* ---------- HEADER ---------- */
+.journey-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.journey-title {
+  font-family: 'Caveat', var(--font-playfair), cursive;
+  font-size: 4.5rem;
+  line-height: 1;
+  color: var(--wine);
+  margin-bottom: 0.4rem;
+  transform: rotate(-2deg);
+}
+
+.journey-sub {
+  font-style: italic;
+  color: var(--text-light);
+  font-size: 1.15rem;
+}
+
+/* ---------- UPLOAD STATION ---------- */
+.upload-station {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4rem;
+}
+
+.upload-paper {
+  background: var(--paper-bg);
+  border: 1px dashed var(--rose);
+  border-radius: 14px;
+  padding: 1.8rem 2rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(136, 14, 79, 0.08);
+  transform: rotate(-0.6deg);
+  position: relative;
+}
+.upload-paper::before {
+  /* a strip of washi tape on top */
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 120px;
+  height: 28px;
+  background: repeating-linear-gradient(45deg, rgba(244,143,177,0.55), rgba(244,143,177,0.55) 8px, rgba(252,228,236,0.55) 8px, rgba(252,228,236,0.55) 16px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.upload-title {
+  font-family: 'Caveat', cursive;
+  font-size: 2rem;
+  color: var(--mauve);
+  text-align: center;
+}
+.upload-sub {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 1.2rem;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.file-drop {
+  position: relative;
+  border: 2px dashed var(--rose);
+  border-radius: 10px;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(252, 228, 236, 0.25);
+  transition: background 0.2s;
+  overflow: hidden;
+}
+.file-drop:hover { background: rgba(252, 228, 236, 0.5); }
+
+.file-drop-hint {
+  color: var(--mauve);
+  font-weight: 600;
+}
+
+.upload-preview {
+  max-width: 100%;
+  max-height: 320px;
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.processing-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(136, 14, 79, 0.85);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.upload-input {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--blush);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--text-dark);
+  outline: none;
+}
+.upload-input:focus { border-color: var(--rose); }
+
+.upload-btn {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--rose), var(--mauve));
+  color: #fff;
+  font-family: var(--font-playfair), serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.upload-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(136, 14, 79, 0.3);
+}
+.upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.upload-status {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--mauve);
+  font-weight: 600;
+}
+
+/* ---------- THE WINDING JOURNEY PATH (SNAKE: rows L→R, then down) ---------- */
+.journey-path {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  row-gap: 2.5rem;
+  column-gap: 0;
+  padding: 2.5rem 0.5rem 2rem;
+}
+
+.journey-stop {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 1.6rem 0.9rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  animation: slideUp 0.9s ease forwards;
+  z-index: 1;
+}
+
+/* Each print hangs from its own bit of clothesline. Because the stops wrap,
+   the segments line up into a continuous string per row, and a fresh string
+   starts on every new row below — giving the snake / winding-down effect. */
+.journey-stop::before {
+  content: '';
+  position: absolute;
+  top: 0.8rem;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--rose) 0 10px,
+    transparent 10px 20px
+  );
+  opacity: 0.6;
+  z-index: 0;
+}
+
+/* a little bead threaded on the string above each print */
+.journey-node {
+  position: absolute;
+  top: 0.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--paper-bg);
+  box-shadow: 0 0 0 2px var(--rose);
+  z-index: 2;
+}
+
+/* ---------- INSTAX PRINT + CLOTHESPIN ---------- */
+.instax-pin {
+  position: relative;
+  display: inline-block;
+}
+
+.clothespin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-4deg);
+  width: 14px;
+  height: 34px;
+  background: linear-gradient(to bottom, #e8c39e, #cda06f);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  z-index: 5;
+}
+.clothespin::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 16px;
+  background: rgba(120, 80, 50, 0.5);
   border-radius: 2px;
 }
 
-.polaroid-card:hover {
-  transform: rotate(0deg) scale(1.05) translateY(-10px);
-  z-index: 10;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+.instax-print {
+  display: inline-block;
+  width: 280px;
+  max-width: 78vw;
+  background: #fff;
+  padding: 14px 14px 16px;
+  border-radius: 3px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.14);
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s;
+  text-align: center;
+}
+.instax-print:hover {
+  transform: rotate(0deg) scale(1.04) translateY(-6px);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.2);
+  z-index: 20;
 }
 
-.polaroid-tape {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-2deg);
-  width: 100px;
-  height: 25px;
-  background: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  backdrop-filter: blur(2px);
-  z-index: 5;
-}
-
-.polaroid-img-wrap {
+.instax-photo {
   width: 100%;
   aspect-ratio: 1;
-  background: #f0f0f0;
   overflow: hidden;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  background: #f0f0f0;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
+}
+.instax-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.polaroid-img-wrap img {
-  transition: transform 0.5s ease;
+.instax-caption {
+  font-family: 'Caveat', cursive;
+  font-size: 1.35rem;
+  color: #4a2630;
+  margin-top: 0.7rem;
+  line-height: 1.1;
 }
 
-.polaroid-card:hover .polaroid-img-wrap img {
-  transform: scale(1.03);
+.instax-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+}
+.who { font-weight: 700; }
+.who-grishma { color: var(--mauve); }
+.who-saket { color: #1565C0; }
+.when { color: var(--text-light); }
+
+/* ---------- REACTIONS ---------- */
+.reaction-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 0.6rem;
+}
+.reaction-chip {
+  background: var(--blush);
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 0.85rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-.polaroid-text {
-  margin-top: 15px;
+.reaction-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--blush);
+}
+.react-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 50%;
+  line-height: 1;
+  transition: transform 0.15s, background 0.15s;
+  filter: grayscale(0.3);
+  opacity: 0.75;
+}
+.react-btn:hover { transform: scale(1.35); filter: none; opacity: 1; }
+.react-btn.react-active {
+  background: var(--blush);
+  filter: none;
+  opacity: 1;
+  transform: scale(1.1);
+}
+.react-btn:disabled { cursor: wait; }
+
+/* ---------- COMMENTS ---------- */
+.comment-toggle {
+  margin-top: 0.7rem;
+  background: none;
+  border: none;
+  color: var(--mauve);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+.comment-toggle:hover { text-decoration: underline; }
+
+.comment-area {
+  margin-top: 0.6rem;
+  text-align: left;
+  border-top: 1px dashed var(--blush);
+  padding-top: 0.6rem;
+}
+.comment-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0.5rem;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-bottom: 0.6rem;
 }
-
-.polaroid-caption {
-  font-family: 'Nothing You Could Do', cursive, var(--font-quicksand);
-  font-size: 1.1rem;
-  color: var(--text-dark);
-  text-align: center;
-}
-
-.polaroid-date {
-  font-size: 0.75rem;
+.comment-empty {
+  font-size: 0.8rem;
   color: var(--text-light);
+  font-style: italic;
   text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+}
+.comment {
+  display: flex;
+  flex-direction: column;
+  background: rgba(252, 228, 236, 0.4);
+  border-radius: 10px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+}
+.comment-grishma { background: rgba(244, 143, 177, 0.18); }
+.comment-saket { background: rgba(21, 101, 192, 0.1); }
+.comment-author { font-weight: 700; font-size: 0.72rem; margin-bottom: 1px; }
+.comment-grishma .comment-author { color: var(--mauve); }
+.comment-saket .comment-author { color: #1565C0; }
+.comment-text { color: var(--text-dark); white-space: pre-wrap; }
+
+.comment-form { display: flex; gap: 0.4rem; }
+.comment-input {
+  flex: 1;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--blush);
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+}
+.comment-input:focus { border-color: var(--rose); }
+.comment-send {
+  border: none;
+  background: var(--mauve);
+  color: #fff;
+  border-radius: 20px;
+  padding: 0 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.comment-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- END OF JOURNEY ---------- */
+.journey-end {
+  flex: 0 0 100%;
+  text-align: center;
+  padding: 1.5rem 2rem 0;
+  position: relative;
+  z-index: 1;
+}
+.journey-end-heart {
+  font-size: 2rem;
+  color: var(--rose);
+  display: block;
+}
+.journey-end p {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: var(--text-light);
 }
 
 .no-photos {
-  grid-column: 1 / -1;
+  flex: 0 0 auto;
+  align-self: center;
   text-align: center;
   color: var(--text-light);
   font-style: italic;
-  padding: 4rem;
+  padding: 4rem 2rem;
+  position: relative;
+  z-index: 1;
 }
 
-@media (max-width: 768px) {
-  .album-page {
-    padding: 2rem 1rem;
-  }
-  .album-header {
-    font-size: 2.5rem;
-  }
-  .album-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 2rem;
-  }
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 720px) {
+  .journey-title { font-size: 3.2rem; }
+  .journey-stop { padding: 1.2rem 0.5rem; }
+  .instax-print { width: 240px; }
 }

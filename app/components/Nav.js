@@ -18,7 +18,7 @@ export default async function Nav() {
           <div className="nav-links">
             <Link href="/diary" className="nav-link">Diary</Link>
             <Link href="/album" className="nav-link">Album</Link>
-            <Link href="/print" className="nav-link">Print 📸</Link>
+            <Link href="/print" className="nav-link">Pose 📸</Link>
 
             {isAdmin && (
               <Link href="/admin" className="nav-link nav-admin-link">Admin ⚙️</Link>

@@ -14,7 +14,7 @@ export default async function HomePage() {
   const { data: photos } = await supabase
     .from('album_photos')
     .select('*')
-    .order('photo_date', { ascending: false });
+    .order('created_at', { ascending: false });
 
   // Combine and sort
   const allEntries = [];
@@ -34,7 +34,7 @@ export default async function HomePage() {
       allEntries.push({
         ...p,
         type: 'photo',
-        date: new Date(p.photo_date)
+        date: p.photo_date ? new Date(p.photo_date) : new Date(p.created_at)
       });
     });
   }

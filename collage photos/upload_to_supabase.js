@@ -104,7 +104,7 @@ async function uploadAndInsert() {
         {
           image_url: publicUrl,
           caption: item.caption,
-          photo_date: item.db_date,
+          photo_date: null,
           category: 'monthly'
         }
       ]);
