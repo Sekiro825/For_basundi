@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import { addReply, addDiaryEntry } from './actions';
 
@@ -90,6 +90,18 @@ export default function DiaryClient({ notes, userRole }) {
   
   const bookRef = useRef();
 
+  // Navigate to the saved page after flipbook remounts (e.g. after adding a new entry)
+  useEffect(() => {
+    const page = sessionStorage.getItem('diaryGoToPage');
+    if (page !== null) {
+      sessionStorage.removeItem('diaryGoToPage');
+      const pageNum = parseInt(page, 10);
+      setTimeout(() => {
+        try { bookRef.current?.pageFlip()?.turnToPage(pageNum); } catch {}
+      }, 400);
+    }
+  }, []);
+
   const handleReply = async (noteId, replyText) => {
     setIsSubmitting(true);
     try {
@@ -114,11 +126,8 @@ export default function DiaryClient({ notes, userRole }) {
       setShowWriteForm(false);
       setStatus('Entry added! ✨');
       setTimeout(() => setStatus(''), 3000);
-      
-      // Optionally turn to the new page if it was added at the front
-      if (bookRef.current) {
-         bookRef.current.pageFlip().turnToPage(1);
-      }
+      // Page 2 = first entry page (0: front cover, 1: form/intro, 2: first note)
+      sessionStorage.setItem('diaryGoToPage', '2');
     } catch (err) {
       setStatus('Failed to save entry 😢');
     } finally {
@@ -165,9 +174,10 @@ export default function DiaryClient({ notes, userRole }) {
         </button>
 
         <div className="book-container">
-          <HTMLFlipBook 
-            width={600} 
-            height={750} 
+          <HTMLFlipBook
+            key={notes.length}
+            width={600}
+            height={750}
             size="stretch"
             minWidth={315}
             maxWidth={1000}
@@ -283,12 +293,23 @@ export default function DiaryClient({ notes, userRole }) {
 
                     <div className="diary-date">
                       <span className="diary-flower">{note.flower_emoji}</span>
-                      {new Date(note.note_date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      <span>
+                        {new Date(note.note_date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                        {note.created_at && (
+                          <span className="diary-write-time">
+                            {' · '}
+                            {new Date(note.created_at).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        )}
+                      </span>
                     </div>
 
                     <h2 className="diary-entry-title">{note.title}</h2>
@@ -325,6 +346,11 @@ export default function DiaryClient({ notes, userRole }) {
                               {new Date(note.grishma_reply_date).toLocaleDateString('en-US', {
                                 month: 'short',
                                 day: 'numeric',
+                              })}
+                              {' · '}
+                              {new Date(note.grishma_reply_date).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
                               })}
                             </span>
                           )}
