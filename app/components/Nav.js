@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getUserRole, logout } from '../actions';
+import NavClient from './NavClient';
 import './Nav.css';
 
 export default async function Nav() {
@@ -13,22 +14,9 @@ export default async function Nav() {
         <Link href={isLoggedIn ? "/home" : "/"} className="nav-logo">
           ✨ Grishma & Saket
         </Link>
-        
-        {isLoggedIn && (
-          <div className="nav-links">
-            <Link href="/diary" className="nav-link">Diary</Link>
-            <Link href="/album" className="nav-link">Album</Link>
-            <Link href="/print" className="nav-link">Pose 📸</Link>
 
-            {isAdmin && (
-              <Link href="/admin" className="nav-link nav-admin-link">Admin ⚙️</Link>
-            )}
-            <form action={logout} className="logout-form">
-              <button type="submit" className="logout-btn">
-                Logout 🚪
-              </button>
-            </form>
-          </div>
+        {isLoggedIn && (
+          <NavClient isAdmin={isAdmin} logoutAction={logout} />
         )}
       </div>
     </nav>

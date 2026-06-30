@@ -667,14 +667,78 @@ h1, h2, h3, h4, h5, h6 {
   .photo-heart-icon {
     font-size: 2.5rem;
   }
-  .notebook-wrapper { padding: 84px 0.5rem 1rem; align-items: stretch; }
-  .notebook-container { height: calc(100vh - 100px); flex-direction: column; border-radius: 8px; }
-  .notebook-binding { width: 100%; height: 30px; flex-direction: row; border-right: none; border-bottom: 1px solid #ccc; padding: 0 2rem; }
-  .spiral-ring { width: 6px; height: 25px; left: 50%; top: -5px; transform: translateX(-50%); background: linear-gradient(to right, #d4af37, #f3e5ab, #d4af37); }
-  .notebook-tabs { position: static; transform: none; flex-wrap: wrap; justify-content: center; padding: 1rem; border-bottom: 2px solid var(--notebook-line); }
-  .notebook-tab { border-radius: 20px; border-bottom: 1px solid var(--blush); }
-  .notebook-tab.active { margin-bottom: 0; padding-bottom: 0.5rem; background: var(--rose); color: white; }
-  .notebook-paper::before { left: 1rem; }
-  .notebook-header { padding: 1rem 1rem 0.5rem 1.5rem; flex-direction: column; align-items: flex-start; }
-  .notebook-content { padding: 1rem 1rem 1rem 1.5rem; }
+}
+
+@media (max-width: 640px) {
+  /* Notebook home page */
+  .notebook-wrapper {
+    padding: 68px 0.5rem 1rem;
+    align-items: stretch;
+  }
+  .notebook-container {
+    height: calc(100vh - 80px);
+    flex-direction: column;
+    border-radius: 8px;
+  }
+  .notebook-binding {
+    width: 100%;
+    height: 28px;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+    padding: 0 1.5rem;
+  }
+  .spiral-ring {
+    width: 6px;
+    height: 22px;
+    left: 50%;
+    top: -5px;
+    transform: translateX(-50%);
+    background: linear-gradient(to right, #d4af37, #f3e5ab, #d4af37);
+  }
+  .notebook-tabs {
+    position: static;
+    transform: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--notebook-line);
+    order: -1; /* ensure tabs appear above binding */
+  }
+  .notebook-tab {
+    border-radius: 20px;
+    border-bottom: 1px solid var(--blush);
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+  }
+  .notebook-tab.active {
+    margin-bottom: 0;
+    padding-bottom: 0.4rem;
+    background: var(--rose);
+    color: white;
+    border-color: var(--rose);
+  }
+  .notebook-paper::before {
+    left: 0.75rem;
+  }
+  .notebook-header {
+    padding: 0.75rem 0.75rem 0.5rem 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .notebook-title {
+    font-size: 1.6rem;
+  }
+  .notebook-content {
+    padding: 0.75rem 0.75rem 1rem 1.25rem;
+  }
+  .entry-body {
+    font-size: 1rem;
+    line-height: 1.75rem;
+  }
+  .entry-photo {
+    max-width: 100%;
+    transform: none;
+  }
 }

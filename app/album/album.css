@@ -519,7 +519,7 @@
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 720px) {
-  .journey-wall { padding: 100px 0.75rem 4rem; }
+  .journey-wall { padding: 72px 0.75rem 4rem; }
   .journey-title { font-size: 3.2rem; }
   .journey-sub { font-size: 1rem; }
   .patakas { margin: 0 -0.75rem 1rem; }
@@ -531,7 +531,7 @@
 
 @media (max-width: 420px) {
   .journey-title { font-size: 2.6rem; }
-  .journey-wall { padding-top: 110px; }
+  .journey-wall { padding-top: 72px; }
   .instax-print { max-width: 260px; padding: 12px 12px 14px; }
   .instax-caption { font-size: 1.2rem; }
   .reaction-bar { gap: 0; }

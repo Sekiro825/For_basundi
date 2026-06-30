@@ -534,57 +534,32 @@
   to { opacity: 1; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .diary-page {
-    padding: 90px 0.5rem 2rem;
-    min-height: calc(100vh - 70px);
+    padding: 72px 0.5rem 2rem;
+    min-height: calc(100vh - 56px);
   }
-  .book-action-btn { width: 100%; max-width: 320px; }
-  
-  .book-wrapper {
-    gap: 0.5rem;
-  }
-  
-  .side-nav-btn {
-    width: 35px;
-    height: 35px;
-    font-size: 1.2rem;
-  }
+  .book-action-btn { width: 100%; max-width: 320px; padding: 0.7rem 1.5rem; font-size: 0.9rem; }
+
+  .book-wrapper { gap: 0.5rem; }
+
+  .side-nav-btn { width: 36px; height: 36px; font-size: 1.2rem; }
 
   .book-container {
-    width: 100vw;
-    max-width: calc(100vw - 80px); /* Space for 35px buttons + gaps */
+    max-width: calc(100vw - 88px);
     margin: 0;
     filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
   }
-  
-  .page-content {
-    padding: 1rem;
-  }
-  
-  .diary-title {
-    font-size: 2.2rem;
-  }
-  
-  .diary-entry-title {
-    font-size: 1.4rem;
-  }
-  
-  .diary-entry-body {
-    font-size: 0.95rem;
-  }
-  
-  .cover-title {
-    font-size: 2.2rem;
-  }
-  
-  .book-action-btn {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .book-nav-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
+
+  .page-content { padding: 1rem; }
+
+  .diary-title { font-size: 2rem; }
+  .diary-entry-title { font-size: 1.4rem; }
+  .diary-entry-body { font-size: 0.95rem; }
+  .cover-title { font-size: 2rem; }
+
+  /* Prevent iOS zoom on focus */
+  .diary-input,
+  .diary-textarea,
+  .diary-reply-textarea { font-size: 16px; }
 }

@@ -518,8 +518,8 @@
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
   .print-page {
-    padding: 90px 16px 40px; /* top clears the fixed nav */
-    min-height: calc(100vh - 70px);
+    padding: 72px 16px 40px;
+    min-height: calc(100vh - 56px);
   }
   .print-title { font-size: 2rem; }
   .print-sub { font-size: 0.95rem; }
