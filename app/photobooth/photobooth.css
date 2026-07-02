@@ -1,0 +1,280 @@
+.photobooth-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.photobooth-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.photobooth-title {
+  font-size: 2.2rem;
+}
+
+.photobooth-sub {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.booth-permission-card {
+  max-width: 460px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--paper-bg);
+  border: 1px dashed var(--rose);
+  border-radius: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Sits on top of the always-mounted local <video>, so the camera element
+   itself never has to unmount/remount when permission is requested. */
+.booth-permission-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(196, 24, 92, 0.75), rgba(88, 14, 79, 0.85));
+}
+
+.booth-picker-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.booth-picker-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.booth-picker-label {
+  font-weight: 700;
+  color: var(--wine);
+  margin-right: 0.3rem;
+}
+
+.booth-chip {
+  border: 1px solid var(--rose);
+  background: var(--paper-bg);
+  color: var(--text-dark);
+  border-radius: 20px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booth-chip.active {
+  background: var(--rose);
+  color: #fff;
+  border-color: var(--mauve);
+}
+
+.booth-stage {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.booth-video-frame {
+  position: relative;
+  width: min(45vw, 340px);
+  height: min(45vw, 340px);
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.booth-canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Live media (video + prop overlay) fills the square frame. */
+.booth-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Mirror the local preview so it feels like a mirror, not a photo. */
+.booth-mirror {
+  transform: scaleX(-1);
+}
+
+/* Transparent props layer sits on top of the live video. */
+.booth-overlay {
+  pointer-events: none;
+  background: transparent;
+}
+
+.booth-waiting-panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(196, 24, 92, 0.5), rgba(88, 14, 79, 0.6));
+  font-style: italic;
+}
+
+.booth-video-tag {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+
+.booth-countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 16px;
+  pointer-events: none;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+.booth-pose-text {
+  font-size: 1.4rem;
+  font-family: var(--font-playfair), serif;
+  font-style: italic;
+  max-width: 80%;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.booth-count-number {
+  font-size: 4rem;
+  font-weight: 800;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.booth-connection-status {
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.booth-start-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.booth-start-row select {
+  padding: 0.4rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid var(--rose);
+  font-family: inherit;
+}
+
+.booth-result-panel {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.booth-result-img {
+  max-width: 100%;
+  width: 360px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.booth-status-msg {
+  margin-top: 0.75rem;
+  color: var(--wine);
+  font-weight: 600;
+}
+
+.booth-result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.booth-gallery-section {
+  margin-top: 3rem;
+}
+
+.booth-gallery-section h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.booth-gallery-empty {
+  text-align: center;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.booth-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.booth-gallery-item {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transform: rotate(-1deg);
+  transition: transform 0.2s ease;
+}
+
+.booth-gallery-item:nth-child(even) {
+  transform: rotate(1deg);
+}
+
+.booth-gallery-item:hover {
+  transform: rotate(0deg) scale(1.03);
+}
+
+@media (max-width: 640px) {
+  .booth-video-frame {
+    width: 100%;
+    height: 70vw;
+    max-height: 340px;
+  }
+}

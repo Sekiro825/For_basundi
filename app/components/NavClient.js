@@ -42,6 +42,7 @@ export default function NavClient({ isAdmin, logoutAction }) {
         <Link href="/diary" className="nav-link" onClick={close}>Diary</Link>
         <Link href="/album" className="nav-link" onClick={close}>Album</Link>
         <Link href="/print" className="nav-link" onClick={close}>Pose 📸</Link>
+        <Link href="/photobooth" className="nav-link" onClick={close}>Photo Booth 📹</Link>
         {isAdmin && (
           <Link href="/admin" className="nav-link nav-admin-link" onClick={close}>Admin ⚙️</Link>
         )}
