@@ -136,7 +136,7 @@
   color: white;
 }
 
-.page-content {
+.diary-page-content {
   padding: 2.5rem 2rem;
   height: 100%;
   overflow-y: auto;
@@ -144,10 +144,10 @@
   scrollbar-color: var(--rose) transparent;
 }
 
-.page-content::-webkit-scrollbar {
+.diary-page-content::-webkit-scrollbar {
   width: 4px;
 }
-.page-content::-webkit-scrollbar-thumb {
+.diary-page-content::-webkit-scrollbar-thumb {
   background-color: var(--rose);
   border-radius: 4px;
 }
@@ -536,8 +536,7 @@
 
 @media (max-width: 640px) {
   .diary-page {
-    padding: 72px 0.5rem 2rem;
-    min-height: calc(100vh - 56px);
+    padding: 0 0.5rem 2rem;
   }
   .book-action-btn { width: 100%; max-width: 320px; padding: 0.7rem 1.5rem; font-size: 0.9rem; }
 
@@ -551,7 +550,7 @@
     filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
   }
 
-  .page-content { padding: 1rem; }
+  .diary-page-content { padding: 0 1rem 1rem; }
 
   .diary-title { font-size: 2rem; }
   .diary-entry-title { font-size: 1.4rem; }

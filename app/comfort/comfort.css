@@ -1,0 +1,337 @@
+.comfort-page-root {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px 80px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.comfort-hero {
+  background: linear-gradient(135deg, #4c0519 0%, #881337 50%, #e11d48 100%);
+  border-radius: 24px;
+  padding: 36px 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 40px rgba(136, 19, 55, 0.35);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.hero-tag {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffe4e6;
+  margin-bottom: 14px;
+}
+
+.hero-title {
+  margin: 0 0 10px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  margin: 0;
+  font-size: 16px;
+  color: #fecdd3;
+  max-width: 650px;
+  line-height: 1.5;
+}
+
+/* TABS */
+.comfort-tabs-wrapper {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.comfort-tab-btn {
+  flex: 1;
+  min-width: 200px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: #2b0c1b;
+  border: 1px solid #881337;
+  color: #ffe4e6;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.comfort-tab-btn:hover {
+  background: #4c0519;
+  color: #fff;
+  border-color: #f43f5e;
+  transform: translateY(-2px);
+}
+
+.comfort-tab-btn.active {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: #fff;
+  border-color: #f43f5e;
+  box-shadow: 0 8px 20px rgba(244, 63, 94, 0.45);
+}
+
+/* SECTION CARDS */
+.comfort-card-box {
+  background: #1f0a14;
+  border: 1px solid #4a1329;
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  color: #fda4af;
+}
+
+.section-desc {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+/* FOOD GRID */
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.food-card {
+  background: #2d101e;
+  border: 1px solid #6b1836;
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.food-card:hover {
+  transform: translateY(-4px);
+  border-color: #f43f5e;
+  box-shadow: 0 12px 24px rgba(244, 63, 94, 0.3);
+}
+
+.food-emoji {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.food-title {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #fff;
+}
+
+.food-desc {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: #cbd5e1;
+  flex: 1;
+}
+
+.whatsapp-signal-btn {
+  display: block;
+  text-align: center;
+  background: #10b981;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.whatsapp-signal-btn:hover {
+  background: #059669;
+}
+
+/* GRID 2 LAYOUT */
+.comfort-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .comfort-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* HEATING BAG */
+.heating-card {
+  text-align: center;
+}
+
+.heating-bag-interactive {
+  width: 120px;
+  height: 120px;
+  margin: 20px auto;
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 0 30px rgba(244, 63, 94, 0.6);
+  animation: pulse-bag 2s infinite ease-in-out;
+}
+
+@keyframes pulse-bag {
+  0% { transform: scale(1); box-shadow: 0 0 20px rgba(244, 63, 94, 0.5); }
+  50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(244, 63, 94, 0.9); }
+  100% { transform: scale(1); box-shadow: 0 0 20px rgba(244, 63, 94, 0.5); }
+}
+
+.warm-heart-bag {
+  font-size: 54px;
+}
+
+.heating-message-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px dashed #f43f5e;
+  border-radius: 12px;
+  padding: 14px;
+  font-style: italic;
+  font-size: 15px;
+  color: #ffe4e6;
+  margin-bottom: 10px;
+}
+
+.heating-count {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* COUPONS */
+.coupons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.coupon-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 16px;
+  border-radius: 14px;
+}
+
+.coupon-item.redeemed {
+  opacity: 0.6;
+  border-color: #10b981;
+}
+
+.coupon-emoji {
+  font-size: 28px;
+}
+
+.coupon-info {
+  flex: 1;
+}
+
+.coupon-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+}
+
+.coupon-sub {
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.redeem-btn {
+  background: #f43f5e;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.coupon-item.redeemed .redeem-btn {
+  background: #10b981;
+  cursor: default;
+}
+
+/* GIFT DISPATCH BANNER */
+.gift-dispatch-banner {
+  background: linear-gradient(135deg, #1f0b18 0%, #4a0e2e 100%);
+  border: 2px solid #f43f5e;
+  border-radius: 20px;
+  padding: 24px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.gift-dispatch-banner h3 {
+  margin: 0 0 4px;
+  color: #fda4af;
+  font-size: 18px;
+}
+
+.gift-dispatch-banner p {
+  margin: 0;
+  font-size: 14px;
+  color: #fecdd3;
+}
+
+.open-gift-modal-btn {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.open-gift-modal-btn:hover {
+  transform: scale(1.04);
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

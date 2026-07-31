@@ -7,7 +7,7 @@ import { addReply, addDiaryEntry } from './actions';
 const Page = React.forwardRef((props, ref) => {
   return (
     <div className={`book-page ${props.isCover ? 'book-cover' : ''}`} ref={ref}>
-      <div className="page-content">
+      <div className="diary-page-content">
         {props.children}
       </div>
     </div>

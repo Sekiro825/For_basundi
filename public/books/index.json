@@ -1,0 +1,42 @@
+[
+  {
+    "id": "catching-caroline",
+    "title": "Catching Caroline",
+    "author": "Sylvia Day",
+    "genre": "Classic & Romance Novel",
+    "coverGradient": "linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%)",
+    "coverEmoji": "🌙🖤",
+    "description": "&lt;div&gt;&lt;div&gt;This is a legally distributed free edition from www.obooko.com &lt;/div&gt;&lt;div&gt;The author’s intellectual property rights are protected by international Copyright law. You are licensed to use this digital copy strictly for your personal enjoyment only. No part of this pub",
+    "totalChapters": 9
+  },
+  {
+    "id": "maid-to-the-mafia",
+    "title": "Maid to the Mafia",
+    "author": "Wanitta Praks",
+    "genre": "Classic & Romance Novel",
+    "coverGradient": "linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%)",
+    "coverEmoji": "💍🍷",
+    "description": "Upon uttering the word coffee, Jenny Stone somehow finds herself paying off her father’s debt by working as a maid to the billionaire mafia boss, Giovanni Dente. Between serving him coffee and doing his dirty work, she finds she's stuck in this intricate web he binds around her. She wants to escape,",
+    "totalChapters": 11
+  },
+  {
+    "id": "pride-and-prejudice",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "genre": "Classic & Romance Novel",
+    "coverGradient": "linear-gradient(135deg, #18181b 0%, #27272a 100%)",
+    "coverEmoji": "🖤🔥",
+    "description": "A captivating novel.",
+    "totalChapters": 62
+  },
+  {
+    "id": "wuthering-heights",
+    "title": "Wuthering Heights",
+    "author": "Emily Brontë",
+    "genre": "Classic & Romance Novel",
+    "coverGradient": "linear-gradient(135deg, #18181b 0%, #27272a 100%)",
+    "coverEmoji": "👑💎",
+    "description": "A captivating novel.",
+    "totalChapters": 35
+  }
+]

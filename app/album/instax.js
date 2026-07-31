@@ -9,12 +9,16 @@ const CARD_H = 980;
 const PHOTO = 700;
 const MARGIN = 50; // left/right/top white border
 
-function loadImage(file) {
+function loadImage(fileOrSrc) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = reject;
-    img.src = URL.createObjectURL(file);
+    if (fileOrSrc instanceof File || fileOrSrc instanceof Blob) {
+      img.src = URL.createObjectURL(fileOrSrc);
+    } else {
+      img.src = fileOrSrc;
+    }
   });
 }
 
@@ -66,9 +70,9 @@ async function ensureFont() {
  * @param {string} photoDate yyyy-mm-dd (optional)
  * @returns {Promise<{ blob: Blob, previewUrl: string }>}
  */
-export async function makeInstax(file, caption = '', photoDate = '') {
+export async function makeInstax(fileOrSrc, caption = '', photoDate = '') {
   await ensureFont();
-  const img = await loadImage(file);
+  const img = await loadImage(fileOrSrc);
 
   const canvas = document.createElement('canvas');
   canvas.width = CARD_W;
@@ -158,7 +162,9 @@ export async function makeInstax(file, caption = '', photoDate = '') {
   const blob = await new Promise((res) =>
     canvas.toBlob(res, 'image/jpeg', 0.9)
   );
-  URL.revokeObjectURL(img.src);
+  if (img.src.startsWith('blob:')) {
+    URL.revokeObjectURL(img.src);
+  }
 
   return { blob, previewUrl: canvas.toDataURL('image/jpeg', 0.85) };
 }

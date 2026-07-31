@@ -2,15 +2,23 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { FILTERS, PROPS, drawProp, mapKeypointsToSquare } from '../lib/photoboothProps';
+import { FILTERS, PROPS_LIST } from '../lib/photoboothProps';
 import { pickPoses } from '../lib/photoboothPoses';
-import { useFaceTracker } from './useFaceTracker';
 import { useWebRTCRoom } from './useWebRTCRoom';
 import { savePhotoboothStrip } from './actions';
+import { createEnhancer } from '../lib/photoboothEnhance';
+import { useFaceTracker } from './useFaceTracker';
 
 const CANVAS_SIZE = 480;
+const MIN_CANVAS_SIZE = 320;
+const MAX_CANVAS_SIZE = 480;
 const SHOT_W = 700;
 const SHOT_H = 350;
+
+const MIN_FPS = 25;
+const TARGET_FPS = 40;
+const PERF_WINDOW_MS = 1000;
+const ENHANCE_INTERVAL = 3;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -23,9 +31,6 @@ function loadImage(src) {
   });
 }
 
-// Cameras aren't natively square, so center-crop each frame to a square
-// ourselves rather than relying on getUserMedia's aspectRatio constraint
-// (which some webcam drivers negotiate badly, returning degenerate frames).
 function drawVideoCoverSquare(ctx, video, destSize) {
   const vw = video.videoWidth;
   const vh = video.videoHeight;
@@ -53,15 +58,129 @@ function roundRectPath(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
+function computeFaceAnchors(keypoints, vw, vh, canvasSize) {
+  if (!keypoints || keypoints.length < 6 || !vw || !vh) return null;
+
+  let sx = 0;
+  let sy = 0;
+  let cropSize = vw;
+  if (vw > vh) {
+    cropSize = vh;
+    sx = (vw - vh) / 2;
+  } else if (vh > vw) {
+    cropSize = vw;
+    sy = (vh - vw) / 2;
+  }
+
+  const mapPt = (kp) => {
+    const rawX = kp.x * vw;
+    const rawY = kp.y * vh;
+    const cx = ((rawX - sx) / cropSize) * canvasSize;
+    const cy = ((rawY - sy) / cropSize) * canvasSize;
+    return { x: cx, y: cy };
+  };
+
+  const rightEye = mapPt(keypoints[0]);
+  const leftEye = mapPt(keypoints[1]);
+  const nose = mapPt(keypoints[2]);
+  const mouth = mapPt(keypoints[3]);
+
+  const eyeMidX = (rightEye.x + leftEye.x) / 2;
+  const eyeMidY = (rightEye.y + leftEye.y) / 2;
+
+  const dx = leftEye.x - rightEye.x;
+  const dy = leftEye.y - rightEye.y;
+  const eyeDist = Math.hypot(dx, dy);
+
+  const angle = Math.atan2(dy, dx);
+
+  const len = eyeDist || 1;
+  const upX = -dy / len;
+  const upY = dx / len;
+
+  return {
+    rightEye,
+    leftEye,
+    nose,
+    mouth,
+    eyeMidX,
+    eyeMidY,
+    eyeDist,
+    angle,
+    upX,
+    upY,
+  };
+}
+
+function getPropTransform(propId, propDef, anchors, canvasSize) {
+  if (!anchors) {
+    let defY = canvasSize / 2;
+    if (['bunny', 'crown', 'flower', 'angel'].includes(propId)) {
+      defY = canvasSize * 0.32;
+    }
+    return {
+      x: canvasSize / 2,
+      y: defY,
+      width: propDef.defaultWidth || 160,
+      height: propDef.defaultHeight || 160,
+      rotation: 0,
+    };
+  }
+
+  const { eyeMidX, eyeMidY, eyeDist, angle, upX, upY } = anchors;
+  const baseScale = (propDef.defaultWidth || 160) / 160;
+
+  if (propId === 'heart-glasses' || propId === 'retro-glasses') {
+    const w = eyeDist * 2.25 * baseScale;
+    const h = (propDef.defaultHeight / propDef.defaultWidth) * w;
+    return {
+      x: eyeMidX,
+      y: eyeMidY,
+      width: w,
+      height: h,
+      rotation: angle,
+    };
+  }
+
+  let offsetMult = 1.25;
+  let scaleMult = 2.4;
+
+  if (propId === 'bunny') {
+    offsetMult = 1.35;
+    scaleMult = 2.6;
+  } else if (propId === 'crown') {
+    offsetMult = 1.05;
+    scaleMult = 2.2;
+  } else if (propId === 'flower') {
+    offsetMult = 0.95;
+    scaleMult = 2.4;
+  } else if (propId === 'angel') {
+    offsetMult = 1.5;
+    scaleMult = 2.3;
+  }
+
+  const offsetDist = eyeDist * offsetMult;
+  const w = eyeDist * scaleMult * baseScale;
+  const h = (propDef.defaultHeight / propDef.defaultWidth) * w;
+
+  return {
+    x: eyeMidX + upX * offsetDist,
+    y: eyeMidY + upY * offsetDist,
+    width: w,
+    height: h,
+    rotation: angle,
+  };
+}
+
 export default function PhotoboothClient({ role, initialStrips }) {
   const partnerName = role === 'admin' ? 'Grishma' : 'Saket';
 
-  const [permissionState, setPermissionState] = useState('idle'); // idle | requesting | granted | denied
+  const [permissionState, setPermissionState] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [filterId, setFilterId] = useState('none');
-  const [propId, setPropId] = useState('none');
+  const [activeProps, setActiveProps] = useState([]);
   const [shotCount, setShotCount] = useState(4);
-  const [sessionPhase, setSessionPhase] = useState('idle'); // idle | countdown | review
+  const [sessionPhase, setSessionPhase] = useState('idle');
   const [currentPose, setCurrentPose] = useState('');
   const [currentCount, setCurrentCount] = useState(null);
   const [resultDataUrl, setResultDataUrl] = useState(null);
@@ -71,18 +190,14 @@ export default function PhotoboothClient({ role, initialStrips }) {
   const [strips, setStrips] = useState(initialStrips || []);
   const [localStream, setLocalStream] = useState(null);
   const [outgoingStream, setOutgoingStream] = useState(null);
+  const [currentCanvasSize, setCurrentCanvasSize] = useState(CANVAS_SIZE);
+  const [captureFps, setCaptureFps] = useState(24);
+  const [perfMode, setPerfMode] = useState('normal');
 
   const router = useRouter();
 
-  // The <video> is rendered unconditionally from the very first paint (never
-  // remounted based on permission state) — this mirrors the proven-working
-  // /camtest pattern exactly, removing any mount-timing race between
-  // getUserMedia resolving and the element existing in the DOM.
   const videoRef = useRef(null);
   const localStreamRef = useRef(null);
-  // overlayCanvas: transparent, draws only props on top of the live <video>.
-  // compositeCanvas: hidden, bakes video+filter+props together for the
-  // outgoing WebRTC stream and for photo capture.
   const overlayCanvasRef = useRef(null);
   const compositeCanvasRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -90,62 +205,182 @@ export default function PhotoboothClient({ role, initialStrips }) {
   const runningRef = useRef(false);
   const cancelledRef = useRef(false);
   const filterIdRef = useRef(filterId);
-  const propIdRef = useRef(propId);
+  const canvasSizeRef = useRef(currentCanvasSize);
+  const captureFpsRef = useRef(captureFps);
+  const perfModeRef = useRef(perfMode);
+  const frameTimesRef = useRef([]);
+  const lastPerfCheckRef = useRef(0);
+  const enhancerRef = useRef(null);
+  const enhanceFrameRef = useRef(0);
+  const overlayCtxRef = useRef(null);
+  const compCtxRef = useRef(null);
 
+  const activePropsRef = useRef([]);
+  const propImagesRef = useRef({});
+
+  // Real-time MediaPipe face tracking keypoints
+  const faceKeypoints = useFaceTracker(videoRef, permissionState === 'granted');
+  const keypointsRef = useRef(null);
+
+  useEffect(() => { keypointsRef.current = faceKeypoints; }, [faceKeypoints]);
   useEffect(() => { filterIdRef.current = filterId; }, [filterId]);
-  useEffect(() => { propIdRef.current = propId; }, [propId]);
+  useEffect(() => { canvasSizeRef.current = currentCanvasSize; }, [currentCanvasSize]);
+  useEffect(() => { captureFpsRef.current = captureFps; }, [captureFps]);
+  useEffect(() => { perfModeRef.current = perfMode; }, [perfMode]);
+  useEffect(() => { activePropsRef.current = activeProps; }, [activeProps]);
 
   const activeFilterCss = (FILTERS.find((f) => f.id === filterId) || FILTERS[0]).css;
-
-  const keypoints = useFaceTracker(videoRef, propId !== 'none' && permissionState === 'granted');
-  const keypointsRef = useRef(keypoints);
-  useEffect(() => { keypointsRef.current = keypoints; }, [keypoints]);
 
   const { peerOnline, connectionState, remoteStream, sendEvent, onSessionEvent } =
     useWebRTCRoom(role, outgoingStream);
 
-  // Single render loop: (1) draw props onto the transparent overlay canvas
-  // for the local preview (the camera itself is a real <video> underneath),
-  // and (2) bake video+filter+props into the hidden composite canvas that
-  // feeds WebRTC + capture. The camera is shown by the <video> element, so
-  // the preview never goes black even if this loop misses frames.
+  useEffect(() => {
+    PROPS_LIST.forEach((prop) => {
+      const img = new Image();
+      img.onload = () => {
+        propImagesRef.current[prop.id] = img;
+      };
+      img.src = prop.src;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!enhancerRef.current) {
+      enhancerRef.current = createEnhancer({
+        canvasSize: CANVAS_SIZE,
+        scanSize: 160,
+        historySize: 3,
+        softSkinAlpha: 0.35,
+        softSkinBlur: 2,
+        lumaLowThreshold: 80,
+        lumaHighThreshold: 140,
+        enableTemporal: true,
+        enableAutoContrast: true,
+        enableSoftSkin: false,
+      });
+    }
+    const overlay = overlayCanvasRef.current;
+    const comp = compositeCanvasRef.current;
+    if (overlay) overlayCtxRef.current = overlay.getContext('2d');
+    if (comp) compCtxRef.current = comp.getContext('2d');
+  }, []);
+
   useEffect(() => {
     if (!localStream) return undefined;
     let raf;
-    const render = () => {
-      const video = videoRef.current;
-      if (video && video.readyState >= 2 && video.videoWidth > 1) {
-        const hasProp = propIdRef.current !== 'none';
-        const mapped = hasProp
-          ? mapKeypointsToSquare(keypointsRef.current, video.videoWidth, video.videoHeight, CANVAS_SIZE)
-          : null;
+    let lastFrameTime = performance.now();
 
-        const overlay = overlayCanvasRef.current;
-        if (overlay) {
-          const octx = overlay.getContext('2d');
-          octx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-          if (mapped) drawProp(octx, propIdRef.current, mapped);
+    const render = (now) => {
+      if (cancelledRef.current) return;
+      const video = videoRef.current;
+
+      if (!overlayCtxRef.current && overlayCanvasRef.current) {
+        overlayCtxRef.current = overlayCanvasRef.current.getContext('2d');
+      }
+      if (!compCtxRef.current && compositeCanvasRef.current) {
+        compCtxRef.current = compositeCanvasRef.current.getContext('2d');
+      }
+
+      if (video && video.readyState >= 2 && video.videoWidth > 1) {
+        const size = canvasSizeRef.current;
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+        const nowTs = performance.now();
+        frameTimesRef.current.push(nowTs);
+        while (frameTimesRef.current.length > 0 && frameTimesRef.current[0] < nowTs - PERF_WINDOW_MS) {
+          frameTimesRef.current.shift();
         }
 
-        const comp = compositeCanvasRef.current;
-        if (comp) {
-          const cctx = comp.getContext('2d');
+        if (nowTs - lastPerfCheckRef.current > PERF_WINDOW_MS) {
+          lastPerfCheckRef.current = nowTs;
+          const fps = frameTimesRef.current.length;
+          if (fps < MIN_FPS && perfModeRef.current !== 'low') {
+            const newSize = Math.max(MIN_CANVAS_SIZE, size - 80);
+            setCurrentCanvasSize(newSize);
+            setCaptureFps(Math.max(15, captureFpsRef.current - 5));
+            setPerfMode('low');
+          } else if (fps < TARGET_FPS && perfModeRef.current === 'normal') {
+            const newSize = Math.max(MIN_CANVAS_SIZE, size - 40);
+            setCurrentCanvasSize(newSize);
+            setCaptureFps(Math.max(20, captureFpsRef.current - 2));
+            setPerfMode('medium');
+          } else if (fps >= TARGET_FPS && perfModeRef.current !== 'normal') {
+            const newSize = Math.min(MAX_CANVAS_SIZE, size + 40);
+            setCurrentCanvasSize(newSize);
+            setCaptureFps(Math.min(24, captureFpsRef.current + 2));
+            setPerfMode('normal');
+          }
+        }
+
+        const anchors = computeFaceAnchors(keypointsRef.current, vw, vh, size);
+
+        // 1. Draw local transparent overlay canvas (renders active face props)
+        const octx = overlayCtxRef.current;
+        if (octx) {
+          octx.clearRect(0, 0, size, size);
+          
+          activePropsRef.current.forEach((propId) => {
+            const propDef = PROPS_LIST.find((p) => p.id === propId);
+            if (!propDef) return;
+            const img = propImagesRef.current[propId];
+            if (img) {
+              const transform = getPropTransform(propId, propDef, anchors, size);
+              octx.save();
+              octx.translate(transform.x, transform.y);
+              octx.rotate(transform.rotation);
+              octx.drawImage(img, -transform.width / 2, -transform.height / 2, transform.width, transform.height);
+              octx.restore();
+            }
+          });
+        }
+
+        // 2. Draw composite WebRTC canvas (renders mirrored video stream + active face props)
+        const cctx = compCtxRef.current;
+        if (cctx) {
           cctx.save();
-          cctx.translate(CANVAS_SIZE, 0);
+          cctx.translate(size, 0);
           cctx.scale(-1, 1);
           const filter = FILTERS.find((f) => f.id === filterIdRef.current);
           cctx.filter = filter ? filter.css : 'none';
-          drawVideoCoverSquare(cctx, video, CANVAS_SIZE);
+          drawVideoCoverSquare(cctx, video, size);
           cctx.filter = 'none';
-          if (mapped) drawProp(cctx, propIdRef.current, mapped);
+
+          activePropsRef.current.forEach((propId) => {
+            const propDef = PROPS_LIST.find((p) => p.id === propId);
+            if (!propDef) return;
+            const img = propImagesRef.current[propId];
+            if (img) {
+              const transform = getPropTransform(propId, propDef, anchors, size);
+              cctx.save();
+              cctx.translate(transform.x, transform.y);
+              cctx.rotate(transform.rotation);
+              cctx.drawImage(img, -transform.width / 2, -transform.height / 2, transform.width, transform.height);
+              cctx.restore();
+            }
+          });
+
+          enhanceFrameRef.current = (enhanceFrameRef.current + 1) % ENHANCE_INTERVAL;
+          if (enhanceFrameRef.current === 0) {
+            enhancerRef.current.enhance(cctx, null, { isCapture: false });
+          }
+
           cctx.restore();
         }
       }
+      lastFrameTime = now;
       raf = requestAnimationFrame(render);
     };
     raf = requestAnimationFrame(render);
     return () => cancelAnimationFrame(raf);
   }, [localStream]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      cancelledRef.current = document.hidden;
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   useEffect(() => {
     if (remoteVideoRef.current) {
@@ -154,8 +389,6 @@ export default function PhotoboothClient({ role, initialStrips }) {
     }
   }, [remoteStream]);
 
-  // Backstop: if for any reason the callback ref didn't attach (e.g. a fast
-  // remount), reattach here. The callback ref is the primary path.
   useEffect(() => {
     const video = videoRef.current;
     if (video && localStream && video.srcObject !== localStream) {
@@ -164,22 +397,23 @@ export default function PhotoboothClient({ role, initialStrips }) {
     }
   }, [localStream, permissionState]);
 
-  // Once the composite canvas is mounted and drawing, capture it as the
-  // outgoing WebRTC video track (silent booth — video only, no mic).
   useEffect(() => {
     if (permissionState === 'granted' && compositeCanvasRef.current && localStream && !outgoingStream) {
-      const canvasStream = compositeCanvasRef.current.captureStream(24);
+      const canvasStream = compositeCanvasRef.current.captureStream(captureFpsRef.current);
       setOutgoingStream(canvasStream);
     }
   }, [permissionState, localStream, outgoingStream]);
 
+  const outgoingStreamRef = useRef(null);
+  useEffect(() => { outgoingStreamRef.current = outgoingStream; }, [outgoingStream]);
+
   useEffect(() => {
     return () => {
       cancelledRef.current = true;
-      localStream?.getTracks().forEach((t) => t.stop());
-      outgoingStream?.getTracks().forEach((t) => t.stop());
+      localStreamRef.current?.getTracks().forEach((t) => t.stop());
+      outgoingStreamRef.current?.getTracks().forEach((t) => t.stop());
     };
-  }, [localStream, outgoingStream]);
+  }, []);
 
   const enableCamera = async () => {
     setPermissionState('requesting');
@@ -190,12 +424,11 @@ export default function PhotoboothClient({ role, initialStrips }) {
       return;
     }
     try {
-      // Video only, no mic at all — this is the exact call proven to work on
-      // /camtest. This is a silent photo booth by design, not a video call.
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
+        audio: false,
+      });
       localStreamRef.current = stream;
-      // videoRef.current is guaranteed to exist — the <video> is always
-      // mounted, never gated behind permissionState.
       videoRef.current.srcObject = stream;
       await videoRef.current.play().catch(() => {});
       setLocalStream(stream);
@@ -275,48 +508,43 @@ export default function PhotoboothClient({ role, initialStrips }) {
       ctx.filter = 'none';
       ctx.restore();
       ctx.strokeStyle = 'rgba(0,0,0,0.08)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x + 0.5, y + 0.5, SHOT_W - 1, SHOT_H - 1);
+      ctx.lineWidth = 2;
+      roundRectPath(ctx, x, y, SHOT_W, SHOT_H, 14);
+      ctx.stroke();
 
-      ctx.fillStyle = '#5D4037';
-      ctx.font = "24px 'Segoe Print', 'Comic Sans MS', cursive";
-      ctx.fillText(poses[i] || '', CARD_W / 2, y + SHOT_H + 24);
-
+      const poseText = poses[i] ? `“${poses[i]}”` : '';
+      if (poseText) {
+        ctx.fillStyle = '#6A1B9A';
+        ctx.font = "italic 500 20px 'Playfair Display', Georgia, serif";
+        ctx.fillText(poseText, CARD_W / 2, y + SHOT_H + 24);
+      }
       y += SHOT_H + CAPTION_H + MARGIN;
     }
 
-    ctx.fillStyle = '#a1887f';
-    ctx.font = "600 16px 'Quicksand', sans-serif";
-    ctx.fillText(
-      new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      CARD_W / 2,
-      cardH - 26
-    );
+    ctx.fillStyle = '#ad1457';
+    ctx.font = '16px sans-serif';
+    const now = new Date();
+    const dateStr = `${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • Photobooth`;
+    ctx.fillText(dateStr, CARD_W / 2, cardH - 24);
 
     return canvas.toDataURL('image/jpeg', 0.92);
   };
 
-  const uploadStrip = async (dataUrl, poses) => {
+  const uploadStrip = async (stripDataUrl, poses) => {
     setSaving(true);
-    setStatusMsg('Saving your strip... 💌');
-    try {
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      const file = new File([blob], `photobooth_${Date.now()}.jpg`, { type: 'image/jpeg' });
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('shot_count', String(poses.length));
-      formData.append('poses', JSON.stringify(poses));
-      const result = await savePhotoboothStrip(formData);
+    setStatusMsg('Saving your strip to the gallery...');
+    const result = await savePhotoboothStrip({
+      author: partnerName,
+      imageDataUrl: stripDataUrl,
+      caption: `Photobooth strip: ${poses.join(' • ')}`,
+    });
+    setSaving(false);
+    if (result.success) {
       setResultUrl(result.url);
-      setStrips((prev) => [{ id: `temp-${Date.now()}`, image_url: result.url, created_at: new Date().toISOString() }, ...prev]);
-      sendEvent('session', { type: 'saved', url: result.url });
       setStatusMsg('Saved to your Photo Booth gallery! 💖');
-      router.refresh();
-    } catch (err) {
-      setStatusMsg(`Couldn't save (${err.message}) — you can still download it below.`);
-    } finally {
-      setSaving(false);
+      sendEvent('session', { type: 'saved', url: result.url });
+    } else {
+      setStatusMsg(`Failed to save: ${result.error}`);
     }
   };
 
@@ -355,7 +583,6 @@ export default function PhotoboothClient({ role, initialStrips }) {
     if (initiator === role) {
       uploadStrip(stripDataUrl, poses);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [captureShot, role]);
 
   useEffect(() => {
@@ -393,6 +620,16 @@ export default function PhotoboothClient({ role, initialStrips }) {
     document.body.removeChild(link);
   };
 
+  const toggleProp = (propId) => {
+    setActiveProps((prev) =>
+      prev.includes(propId) ? prev.filter((id) => id !== propId) : [...prev, propId]
+    );
+  };
+
+  const clearAllProps = () => {
+    setActiveProps([]);
+  };
+
   return (
     <div className="photobooth-page">
       <div className="photobooth-header">
@@ -415,25 +652,30 @@ export default function PhotoboothClient({ role, initialStrips }) {
             ))}
           </div>
           <div className="booth-picker-group">
-            <span className="booth-picker-label">Prop</span>
-            {PROPS.map((p) => (
-              <button
-                key={p.id}
-                className={`booth-chip ${propId === p.id ? 'active' : ''}`}
-                onClick={() => setPropId(p.id)}
-              >
-                {p.emoji} {p.label}
+            <span className="booth-picker-label">Props</span>
+            {PROPS_LIST.map((p) => {
+              const isActive = activeProps.includes(p.id);
+              return (
+                <button
+                  key={p.id}
+                  className={`booth-chip ${isActive ? 'active' : ''}`}
+                  onClick={() => toggleProp(p.id)}
+                >
+                  {p.emoji} {p.label}
+                </button>
+              );
+            })}
+            {activeProps.length > 0 && (
+              <button className="booth-chip" style={{ borderColor: '#FF4081', color: '#FF4081' }} onClick={clearAllProps}>
+                🗑️ Clear All
               </button>
-            ))}
+            )}
           </div>
         </div>
       )}
 
       <div className="booth-stage">
         <div className="booth-video-frame">
-          {/* Always mounted from first paint — never gated behind
-              permissionState — so getUserMedia can attach to a guaranteed,
-              already-existing element instead of racing a conditional mount. */}
           <video
             ref={videoRef}
             autoPlay
@@ -444,59 +686,72 @@ export default function PhotoboothClient({ role, initialStrips }) {
           />
           <canvas
             ref={overlayCanvasRef}
-            width={CANVAS_SIZE}
-            height={CANVAS_SIZE}
-            className="booth-media booth-overlay booth-mirror"
+            width={currentCanvasSize}
+            height={currentCanvasSize}
+            className="booth-overlay-canvas"
           />
-          <span className="booth-video-tag">You</span>
+          <canvas
+            ref={compositeCanvasRef}
+            width={currentCanvasSize}
+            height={currentCanvasSize}
+            style={{ display: 'none' }}
+          />
 
           {permissionState !== 'granted' && (
             <div className="booth-permission-overlay">
-              {errorMsg && <p className="login-error-msg">{errorMsg}</p>}
-              <p>Enable your camera to start the booth with {partnerName}.</p>
-              <button className="btn-save" onClick={enableCamera} disabled={permissionState === 'requesting'}>
-                {permissionState === 'requesting' ? 'Requesting access...' : '📸 Enable Camera'}
-              </button>
+              {permissionState === 'idle' && (
+                <>
+                  <p>Ready to jump in? Allow camera access to start.</p>
+                  <button className="btn-enable-cam" onClick={enableCamera}>
+                    Enable Camera 📷
+                  </button>
+                </>
+              )}
+              {permissionState === 'requesting' && <p>Requesting camera access...</p>}
+              {permissionState === 'denied' && (
+                <>
+                  <p style={{ color: '#FFCDD2', fontWeight: 600 }}>{errorMsg}</p>
+                  <button className="btn-enable-cam" onClick={enableCamera}>
+                    Retry Camera 📷
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {sessionPhase === 'countdown' && (
+            <div className="booth-countdown-overlay">
+              {currentPose && <div className="booth-pose-banner">Pose: {currentPose}</div>}
+              {currentCount !== null && <div className="booth-count-big">{currentCount}</div>}
             </div>
           )}
         </div>
-        <div className="booth-video-frame">
+
+        <div className="booth-video-frame remote-frame">
           {remoteStream ? (
             <video ref={remoteVideoRef} autoPlay playsInline className="booth-media" />
           ) : (
-            <div className="booth-waiting-panel">
-              {peerOnline ? 'Connecting to ' + partnerName + '...' : 'Waiting for ' + partnerName + ' to join...'}
+            <div className="booth-waiting-placeholder">
+              <span className="pulse-heart">💓</span>
+              <p>
+                Waiting for {partnerName} to join...
+                <br />
+                <small>(Share page link with them)</small>
+              </p>
             </div>
           )}
-          <span className="booth-video-tag">{partnerName}</span>
         </div>
-        {/* Hidden canvas that bakes video+filter+props for WebRTC + capture */}
-        <canvas
-          ref={compositeCanvasRef}
-          width={CANVAS_SIZE}
-          height={CANVAS_SIZE}
-          style={{ display: 'none' }}
-        />
-
-        {sessionPhase === 'countdown' && (
-          <div className="booth-countdown-overlay">
-            <p className="booth-pose-text">{currentPose}</p>
-            {currentCount && <p className="booth-count-number">{currentCount}</p>}
-          </div>
-        )}
       </div>
 
       {permissionState === 'granted' && (
         <>
-
-          <div className="booth-connection-status">
+          <div className="booth-connection-badge">
+            Status:{' '}
             {connectionState === 'connected'
               ? `Connected with ${partnerName} 💕`
-              : connectionState === 'connecting'
-                ? 'Connecting...'
-                : peerOnline
-                  ? `${partnerName} is online, connecting...`
-                  : `Waiting for ${partnerName}...`}
+              : peerOnline
+                ? `Connecting to ${partnerName}...`
+                : `Waiting for ${partnerName}...`}
           </div>
 
           {sessionPhase === 'idle' && (
@@ -507,37 +762,30 @@ export default function PhotoboothClient({ role, initialStrips }) {
                 <option value={5}>5</option>
                 <option value={6}>6</option>
               </select>
-              <button className="btn-save" onClick={startSession} disabled={connectionState !== 'connected'}>
-                ✨ Start Photo Booth
+              <button className="btn-start" onClick={startSession} disabled={connectionState !== 'connected'}>
+                Start Photo Booth
               </button>
             </div>
           )}
 
-          {sessionPhase === 'review' && resultDataUrl && (
-            <div className="booth-result-panel">
-              <img src={resultUrl || resultDataUrl} alt="Your photo booth strip" className="booth-result-img" />
-              {statusMsg && <p className="booth-status-msg">{statusMsg}</p>}
+          {sessionPhase === 'review' && (
+            <div className="booth-result-card">
+              {resultDataUrl && <img src={resultDataUrl} alt="Your photo strip" />}
+              {resultUrl && <img src={resultUrl} alt="Your photo strip" />}
               <div className="booth-result-actions">
-                <button className="btn-save" onClick={downloadResult}>💾 Download</button>
-                <button className="btn-reset" onClick={resetForAnother}>🔄 Take Another</button>
+                <button className="btn-save" onClick={downloadResult}>
+                  📥 Download Strip
+                </button>
+                <button className="btn-save" onClick={resetForAnother}>
+                  🔁 Another Round
+                </button>
               </div>
             </div>
           )}
+
+          {statusMsg && <p className="booth-status">{statusMsg}</p>}
         </>
       )}
-
-      <div className="booth-gallery-section">
-        <h2>Past Strips</h2>
-        {strips.length === 0 ? (
-          <p className="booth-gallery-empty">No strips yet — take your first one above!</p>
-        ) : (
-          <div className="booth-gallery-grid">
-            {strips.map((s) => (
-              <img key={s.id} src={s.image_url} alt="Photo booth strip" className="booth-gallery-item" />
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

@@ -25,11 +25,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${quicksand.variable} ${playfair.variable}`}>
-        <Nav />
-        <main className="page-content">
-          {children}
-        </main>
+      <body
+        className={`${quicksand.variable} ${playfair.variable}`}
+        suppressHydrationWarning
+      >
+        <div className="app-shell">
+          <Nav />
+          <main className="page-content">{children}</main>
+        </div>
       </body>
     </html>
   );

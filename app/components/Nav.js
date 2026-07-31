@@ -9,17 +9,15 @@ export default async function Nav() {
   const isAdmin = userRole === 'admin';
 
   return (
-    <nav className="main-nav">
-      <div className="nav-container">
-        <Link href={isLoggedIn ? "/home" : "/"} className="nav-logo">
-          ✨ Grishma & Saket
-        </Link>
-
-        {isLoggedIn && (
-          <NavClient isAdmin={isAdmin} logoutAction={logout} />
-        )}
-      </div>
-    </nav>
+    <>
+      {isLoggedIn && <NavClient isAdmin={isAdmin} logoutAction={logout} />}
+      <Link
+        href={isLoggedIn ? '/home' : '/'}
+        className="skip-to-content"
+        aria-label="Skip to main content"
+      >
+        Skip to content
+      </Link>
+    </>
   );
 }
-
