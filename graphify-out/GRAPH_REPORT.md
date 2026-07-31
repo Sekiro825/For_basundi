@@ -1,11 +1,11 @@
-# Graph Report - For_basundi  (2026-07-31)
+# Graph Report - For_basundi  (2026-08-01)
 
 ## Corpus Check
-- 59 files · ~9,312,882 words
+- 60 files · ~9,312,910 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 218 nodes · 239 edges · 16 communities detected
+- 219 nodes · 239 edges · 16 communities detected
 - Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 21 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -133,7 +133,7 @@ Nodes (2): getBaseFilename(), uploadAndInsert()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `getAdminSupabase()` connect `Community 0` to `Community 8`, `Community 4`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+  _High betweenness centrality (0.027) - this node is a cross-community bridge._
 - **Why does `PhotoboothPage()` connect `Community 4` to `Community 0`?**
   _High betweenness centrality (0.012) - this node is a cross-community bridge._
 - **Are the 15 inferred relationships involving `getAdminSupabase()` (e.g. with `addLoveNote()` and `addAlbumPhoto()`) actually correct?**
