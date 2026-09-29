@@ -15,8 +15,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "Grishma & Saket 💖",
-  description: "A special place for all our memories, notes, and photos.",
+  title: "Parshvi & Saket 💖",
+  description: "A little birthday surprise for Parshvi, from Saket.",
   icons: {
     icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>",
   },

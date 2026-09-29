@@ -1,0 +1,990 @@
+/* ============================================================
+   /birthday/memories: our little album (mg-*)
+   Sits on .bd-root (tokens + night background from birthday.css)
+   ============================================================ */
+
+.mg-root {
+  --mg-pad: clamp(16px, 4vw, 48px);
+  --mg-gap: 12px;
+  --mg-rose-soft: rgba(244, 143, 177, 0.55);
+  --mg-lilac: #d9c2f0;
+  --mg-peach: #ffd1b3;
+  padding: 76px 0 max(28px, env(safe-area-inset-bottom));
+}
+
+@media (min-width: 769px) {
+  .mg-root {
+    padding-top: 44px;
+  }
+}
+
+.mg-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-inline: var(--mg-pad);
+}
+
+.mg-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Header ---------- */
+
+.mg-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 18px;
+  text-align: center;
+}
+
+.mg-kicker {
+  margin: 0;
+  font-family: var(--bd-sans);
+  font-weight: 700;
+  font-size: clamp(0.68rem, 0.64rem + 0.2vw, 0.8rem);
+  line-height: 1.3;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bd-gold);
+}
+
+.mg-title {
+  margin: 0;
+  padding: 0.04em 0.25em 0.12em;
+  font-family: var(--bd-script);
+  font-weight: 400;
+  font-size: clamp(3rem, 2rem + 5vw, 6rem);
+  line-height: 1.05;
+  text-wrap: balance;
+  color: var(--bd-cream);
+  filter: drop-shadow(0 0 22px rgba(232, 194, 110, 0.3));
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .mg-title {
+    background: linear-gradient(100deg, #d9a94f 0%, #ffe7a8 26%, #e8c26e 46%, #f7b6cf 68%, #ffe7a8 88%, #d9a94f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.mg-sub {
+  margin: 0;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.9rem);
+  line-height: 1.2;
+  color: var(--bd-blush);
+}
+
+.mg-counts {
+  margin: 4px 0 0;
+  font-family: var(--bd-sans);
+  font-weight: 600;
+  font-size: clamp(0.78rem, 0.74rem + 0.2vw, 0.9rem);
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--bd-muted);
+}
+
+.mg-orn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--bd-rose);
+  text-shadow: 0 0 14px rgba(244, 143, 177, 0.6);
+}
+
+.mg-orn::before,
+.mg-orn::after {
+  content: '';
+  width: 56px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bd-gold));
+}
+
+.mg-orn::after {
+  background: linear-gradient(90deg, var(--bd-gold), transparent);
+}
+
+.mg-head > * {
+  animation: mg-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+
+.mg-head > :nth-child(2) { animation-delay: 0.08s; }
+.mg-head > :nth-child(3) { animation-delay: 0.18s; }
+.mg-head > :nth-child(4) { animation-delay: 0.26s; }
+.mg-head > :nth-child(5) { animation-delay: 0.34s; }
+
+/* ---------- Sticky chip row ---------- */
+
+.mg-sentinel {
+  height: 1px;
+  margin-bottom: -1px;
+}
+
+.mg-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 10px 0 6px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mg-tabs-stuck {
+  background: linear-gradient(180deg, rgba(15, 6, 16, 0.94), rgba(22, 8, 20, 0.8));
+  box-shadow: 0 1px 0 var(--bd-glass-border), 0 12px 30px -18px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.mg-tabs-row {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 4px var(--mg-pad);
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  transition: padding 0.3s ease;
+}
+
+.mg-tabs-row::-webkit-scrollbar {
+  display: none;
+}
+
+.mg-tabs-row > li {
+  flex: 0 0 auto;
+}
+
+/* Centre the chips when they fit; auto margins collapse (safely) when they don't. */
+.mg-tabs-row > li:first-child {
+  margin-left: auto;
+}
+
+.mg-tabs-row > li:last-child {
+  margin-right: auto;
+}
+
+/* Phones: once stuck, the row sits beside the fixed 44px hamburger (top 14px). */
+@media (max-width: 768px) {
+  .mg-tabs-stuck .mg-tabs-row {
+    padding-left: 70px;
+  }
+}
+
+.mg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--bd-glass-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--bd-ink);
+  font-family: var(--bd-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  touch-action: manipulation;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mg-chip-n {
+  display: none;
+  min-width: 1.7em;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 480px) {
+  .mg-chip-n {
+    display: inline-block;
+  }
+}
+
+@media (hover: hover) {
+  .mg-chip:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(232, 194, 110, 0.45);
+  }
+}
+
+.mg-chip[aria-current] {
+  color: #2a0e25;
+  border-color: rgba(255, 236, 200, 0.6);
+  background: linear-gradient(135deg, #ffe7a8 0%, var(--bd-gold) 45%, #f3a6c4 100%);
+  box-shadow: 0 6px 18px -8px rgba(244, 143, 177, 0.75), 0 0 22px -8px rgba(232, 194, 110, 0.6);
+}
+
+.mg-chip[aria-current] .mg-chip-n {
+  background: rgba(42, 14, 37, 0.14);
+}
+
+.mg-chip:focus-visible {
+  outline: 2px solid var(--bd-gold);
+  outline-offset: 2px;
+}
+
+/* ---------- Sections ---------- */
+
+.mg-sec {
+  container-type: inline-size;
+  padding-top: clamp(40px, 8vw, 88px);
+  scroll-margin-top: 70px;
+}
+
+.mg-sec-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: clamp(18px, 3.5vw, 36px);
+  text-align: center;
+}
+
+.mg-h2 {
+  margin: 0;
+  padding: 0 0.2em 0.06em;
+  font-family: var(--bd-script);
+  font-weight: 400;
+  font-size: clamp(2.7rem, 1.9rem + 4vw, 4.6rem);
+  line-height: 1.25;
+  color: var(--bd-cream);
+  text-shadow: 0 0 26px rgba(244, 143, 177, 0.4), 0 2px 12px rgba(0, 0, 0, 0.45);
+  text-wrap: balance;
+}
+
+.mg-h2:focus {
+  outline: none;
+}
+
+.mg-sec-sub {
+  margin: 0;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--bd-blush);
+}
+
+/* ---------- Us: chapters ---------- */
+
+.mg-chapter + .mg-chapter {
+  margin-top: clamp(34px, 7vw, 64px);
+}
+
+.mg-ch-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.mg-ch-num {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--bd-sans);
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--bd-gold);
+}
+
+.mg-ch-num::before,
+.mg-ch-num::after {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bd-gold));
+}
+
+.mg-ch-num::after {
+  background: linear-gradient(90deg, var(--bd-gold), transparent);
+}
+
+.mg-ch-title {
+  margin: 0;
+  font-family: var(--bd-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.45rem, 1.2rem + 1.2vw, 2.1rem);
+  line-height: 1.2;
+  color: var(--bd-cream);
+  text-shadow: 0 0 20px rgba(232, 194, 110, 0.25);
+  text-wrap: balance;
+}
+
+.mg-ch-note {
+  margin: 0;
+  max-width: 34ch;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.45rem);
+  line-height: 1.2;
+  color: var(--bd-muted);
+  transform: rotate(-1deg);
+}
+
+/* ---------- Masonry of polaroids ---------- */
+
+.mg-masonry {
+  columns: 2;
+  column-gap: var(--mg-gap);
+}
+
+.mg-cell {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  break-inside: avoid;
+  padding: 4px 3px var(--mg-gap);
+}
+
+.mg-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 6px 6px 20px;
+  border: 0;
+  border-radius: 3px;
+  background: linear-gradient(160deg, #fffaf2 0%, var(--bd-cream) 55%, #f5e4cf 100%);
+  box-shadow:
+    0 16px 30px -14px rgba(0, 0, 0, 0.7),
+    0 3px 8px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  color: inherit;
+  font: inherit;
+  cursor: zoom-in;
+  rotate: var(--mg-tilt, 0deg);
+  scroll-margin: 88px 0 24px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    rotate 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+
+/* A tiny doodled heart on some of the polaroid lips. */
+.mg-cell:nth-child(3n + 2) .mg-card-us::after {
+  content: '\2661';
+  position: absolute;
+  right: 8px;
+  bottom: 1px;
+  font-family: var(--bd-serif);
+  font-size: 0.9rem;
+  line-height: 1.2;
+  color: rgba(184, 137, 47, 0.8);
+}
+
+.mg-card-gold {
+  padding: 5px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #fff1c9 0%, #e8c26e 28%, #b8892f 52%, #ffe7a8 78%, #d9a94f 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 231, 168, 0.3),
+    0 16px 32px -14px rgba(0, 0, 0, 0.75),
+    0 0 26px -10px rgba(232, 194, 110, 0.55);
+}
+
+.mg-card-gold .mg-shot {
+  border: 2px solid #fff6e8;
+  border-radius: 3px;
+}
+
+@media (hover: hover) {
+  .mg-card:hover {
+    z-index: 2;
+    rotate: 0deg;
+    scale: 1.035;
+    box-shadow:
+      0 26px 44px -16px rgba(0, 0, 0, 0.8),
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      0 0 34px -10px rgba(244, 143, 177, 0.55);
+  }
+}
+
+.mg-card:focus-visible {
+  z-index: 2;
+  rotate: 0deg;
+  scale: 1.035;
+  outline: 3px solid var(--bd-gold);
+  outline-offset: 3px;
+}
+
+.mg-card:active {
+  scale: 0.98;
+}
+
+.mg-shot {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 1px;
+  background:
+    radial-gradient(70% 55% at 30% 25%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 70%),
+    linear-gradient(145deg, #f7c6d8 0%, #f2d9a6 55%, var(--mg-lilac) 100%);
+}
+
+.mg-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.mg-img[data-broken] {
+  opacity: 0;
+}
+
+/* Chapters with only a few photos keep fewer, centred columns. */
+.mg-masonry.mg-few-1 {
+  columns: 1;
+  max-width: 340px;
+  margin-inline: auto;
+}
+
+@container (min-width: 560px) {
+  .mg-masonry {
+    --mg-gap: 16px;
+    columns: 3;
+  }
+
+  .mg-card-us {
+    padding: 8px 8px 26px;
+  }
+
+  .mg-masonry.mg-few-2 {
+    columns: 2;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+}
+
+@container (min-width: 900px) {
+  .mg-masonry {
+    --mg-gap: 20px;
+    columns: 4;
+  }
+
+  .mg-masonry.mg-few-3 {
+    columns: 3;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+}
+
+/* ---------- On call: phone frames ---------- */
+
+.mg-phones {
+  --mg-cols: 3;
+  --mg-pgap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px var(--mg-pgap);
+}
+
+.mg-pcell {
+  flex: 0 0 calc((100% - (var(--mg-cols) - 1) * var(--mg-pgap)) / var(--mg-cols));
+  min-width: 0;
+}
+
+.mg-phone {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+  background: linear-gradient(160deg, #3a1432 0%, #150712 60%, #241022 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 18px 34px -16px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(0, 0, 0, 0.35);
+  color: inherit;
+  font: inherit;
+  cursor: zoom-in;
+  scroll-margin: 88px 0 24px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* The little pill-shaped camera cut-out. */
+.mg-phone::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  z-index: 1;
+  width: 26%;
+  height: 5px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: rgba(15, 6, 16, 0.85);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.mg-phone .mg-shot {
+  aspect-ratio: var(--mg-call-ar, 0.4863);
+  border-radius: 16px;
+}
+
+.mg-phone .mg-img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (hover: hover) {
+  .mg-phone:not(.mg-phone-clip):hover {
+    translate: 0 -4px;
+    border-color: rgba(232, 194, 110, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 24px 40px -16px rgba(0, 0, 0, 0.85),
+      0 0 30px -8px rgba(244, 143, 177, 0.5);
+  }
+}
+
+.mg-phone:focus-visible {
+  outline: 3px solid var(--bd-gold);
+  outline-offset: 3px;
+}
+
+@container (min-width: 480px) {
+  .mg-phones {
+    --mg-cols: 4;
+  }
+}
+
+@container (min-width: 700px) {
+  .mg-phones {
+    --mg-cols: 5;
+    --mg-pgap: 16px;
+    row-gap: 20px;
+  }
+
+  .mg-phone {
+    border-radius: 24px;
+    padding: 5px;
+  }
+
+  .mg-phone .mg-shot {
+    border-radius: 19px;
+  }
+}
+
+@container (min-width: 960px) {
+  .mg-phones {
+    --mg-cols: 7;
+  }
+}
+
+/* ---------- Clips ---------- */
+
+/* Two side by side; they stack only when a column would drop below 146px. */
+.mg-clips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
+  gap: 22px 14px;
+  max-width: 540px;
+  margin-inline: auto;
+}
+
+.mg-clip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  justify-self: center;
+  width: 100%;
+  max-width: 250px;
+  min-width: 0;
+  margin: 0;
+}
+
+.mg-phone-clip {
+  padding: 5px;
+  border-radius: 26px;
+  cursor: auto;
+}
+
+.mg-phone-clip::before {
+  display: none;
+}
+
+.mg-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--mg-ar, 9 / 16);
+  border-radius: 21px;
+  background: #0b0409;
+  object-fit: cover;
+}
+
+.mg-video:focus-visible {
+  outline: 3px solid var(--bd-gold);
+  outline-offset: 3px;
+}
+
+.mg-clip-cap {
+  font-family: var(--bd-hand);
+  font-size: clamp(1.2rem, 1.1rem + 0.4vw, 1.45rem);
+  line-height: 1.15;
+  text-align: center;
+  color: var(--bd-blush);
+}
+
+/* ---------- Footer ---------- */
+
+.mg-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: clamp(56px, 10vw, 110px);
+  padding-bottom: 16px;
+  text-align: center;
+}
+
+.mg-foot-note {
+  margin: 0;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.45rem, 1.2rem + 1vw, 2rem);
+  line-height: 1.2;
+  color: var(--bd-blush);
+  text-shadow: 0 0 20px rgba(244, 143, 177, 0.35);
+}
+
+.mg-foot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.mg-sign {
+  margin: 6px 0 0;
+  font-family: var(--bd-sans);
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bd-muted);
+}
+
+/* ---------- Scroll reveal (JS adds data-mg-anim; no-JS shows everything) ---------- */
+
+[data-mg-reveal] {
+  transition: opacity 0.7s ease, translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.mg-root[data-mg-anim] [data-mg-reveal]:not([data-mg-in]) {
+  opacity: 0;
+  translate: 0 22px;
+}
+
+/* ---------- Lightbox ---------- */
+
+.mg-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background:
+    radial-gradient(90% 60% at 50% 110%, rgba(109, 15, 60, 0.45), transparent 60%),
+    rgba(12, 4, 12, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--bd-ink);
+  overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
+  animation: mg-fade 0.25s ease;
+}
+
+.mg-lb-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 4px 18px;
+}
+
+.mg-lb-count {
+  margin: 0;
+  font-family: var(--bd-sans);
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.14em;
+  color: var(--bd-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.mg-lb-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--bd-glass-border);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--bd-ink);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s ease, border-color 0.2s ease, scale 0.2s ease;
+}
+
+@media (hover: hover) {
+  .mg-lb-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(232, 194, 110, 0.5);
+  }
+}
+
+.mg-lb-btn:active {
+  scale: 0.94;
+}
+
+.mg-lb-btn:focus-visible {
+  outline: 2px solid var(--bd-gold);
+  outline-offset: 3px;
+}
+
+.mg-lb-stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 6px 12px;
+  overflow: hidden;
+  container-type: size;
+}
+
+.mg-lb-frame {
+  position: relative;
+  width: min(100cqw, 100cqh * var(--mg-ar, 0.75));
+  aspect-ratio: var(--mg-ar, 0.75);
+  overflow: hidden;
+  border-radius: 6px;
+  background:
+    radial-gradient(70% 55% at 30% 25%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 70%),
+    linear-gradient(145deg, rgba(244, 143, 177, 0.35) 0%, rgba(232, 194, 110, 0.28) 55%, rgba(217, 194, 240, 0.32) 100%);
+  box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
+  animation: mg-lb-open 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.mg-lb-frame[data-dir='next'] {
+  animation-name: mg-lb-next;
+}
+
+.mg-lb-frame[data-dir='prev'] {
+  animation-name: mg-lb-prev;
+}
+
+.mg-lb-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.mg-lb-full {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.mg-lb-full.mg-lb-loaded {
+  opacity: 1;
+}
+
+.mg-lb-bottom {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 14px;
+}
+
+.mg-lb-cap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.mg-lb-cap-title {
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--bd-hand);
+  font-size: 1.4rem;
+  line-height: 1.15;
+  color: var(--bd-blush);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mg-lb-cap-date {
+  font-family: var(--bd-sans);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bd-muted);
+}
+
+@media (min-width: 769px) {
+  .mg-lb-stage {
+    padding: 8px 96px;
+  }
+
+  .mg-lb-bottom {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    padding-bottom: 20px;
+  }
+
+  .mg-lb-bottom > span:empty {
+    display: none;
+  }
+
+  .mg-lb-nav {
+    position: absolute;
+    top: 50%;
+    width: 56px;
+    height: 56px;
+    translate: 0 -50%;
+  }
+
+  .mg-lb-prev {
+    left: max(22px, env(safe-area-inset-left));
+  }
+
+  .mg-lb-next {
+    right: max(22px, env(safe-area-inset-right));
+  }
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes mg-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes mg-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes mg-lb-open {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes mg-lb-next {
+  from {
+    opacity: 0.4;
+    transform: translateX(28px);
+  }
+}
+
+@keyframes mg-lb-prev {
+  from {
+    opacity: 0.4;
+    transform: translateX(-28px);
+  }
+}
+
+/* ---------- Reduced motion: no tilt, no rise, no slides ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-head > *,
+  .mg-lb,
+  .mg-lb-frame {
+    animation: none;
+  }
+
+  .mg-card,
+  .mg-phone,
+  .mg-chip,
+  .mg-tabs,
+  .mg-tabs-row,
+  .mg-lb-btn,
+  .mg-lb-frame,
+  .mg-lb-full,
+  [data-mg-reveal] {
+    transition: none;
+  }
+
+  .mg-card,
+  .mg-card:hover,
+  .mg-card:focus-visible,
+  .mg-card:active {
+    rotate: none;
+    scale: none;
+  }
+
+  .mg-phone:hover {
+    translate: none;
+  }
+
+  .mg-ch-note {
+    transform: none;
+  }
+}

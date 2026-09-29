@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getUserRole, logout } from '../actions';
+import { getUserRole } from '../actions';
 import NavClient from './NavClient';
 import './Nav.css';
 
@@ -10,9 +10,9 @@ export default async function Nav() {
 
   return (
     <>
-      {isLoggedIn && <NavClient isAdmin={isAdmin} logoutAction={logout} />}
+      {isLoggedIn && <NavClient isAdmin={isAdmin} />}
       <Link
-        href={isLoggedIn ? '/home' : '/'}
+        href={isLoggedIn ? '/birthday' : '/'}
         className="skip-to-content"
         aria-label="Skip to main content"
       >

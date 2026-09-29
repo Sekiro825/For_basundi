@@ -574,7 +574,7 @@
   z-index: 1;
 }
 
-.sidebar-logo-avatar.avatar-grishma {
+.sidebar-logo-avatar.avatar-parshvi {
   position: absolute;
   left: 14px;
   z-index: 2;
@@ -585,7 +585,7 @@
   z-index: 3;
 }
 
-.sidebar-logo:hover .sidebar-logo-avatar.avatar-grishma {
+.sidebar-logo:hover .sidebar-logo-avatar.avatar-parshvi {
   transform: translateX(4px) rotate(8deg) scale(1.08);
   z-index: 3;
 }

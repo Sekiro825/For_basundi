@@ -48,3 +48,11 @@ next-env.d.ts
 /collage photos/final_instax_prints/
 /collage photos/processed_instax/
 
+
+# Private birthday photos/videos — never commit (repo is public).
+# Originals live in assets/Photosssss; web copies in private/, served only
+# to logged-in visitors by app/birthday/media/[...file]/route.js.
+/assets/Photosssss/
+/private/
+/public/birthday/
+*.mp4

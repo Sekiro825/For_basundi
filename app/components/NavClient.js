@@ -4,11 +4,16 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+// It's Parshvi's birthday, so the sidebar only shows the birthday pages.
+// Diary, Album, Photo Booth and Admin still exist at their URLs, just unlinked.
 const LINKS = [
-  { href: '/diary', label: 'Diary', icon: '📔' },
-  { href: '/album', label: 'Album', icon: '📷' },
-  { href: '/photobooth', label: 'Photo Booth', icon: '📹', trailing: '📹' },
+  { href: '/birthday', label: 'Birthday', icon: '🎂', exact: true },
+  { href: '/birthday/memories', label: 'Our Memories', icon: '📸' },
 ];
+
+// Only Saket (admin) sees this: runs the whole surprise before midnight,
+// with a scene switcher. Parshvi should log in with the user password.
+const PREVIEW_LINK = { href: '/birthday?preview', label: 'Test run', icon: '🧪' };
 
 const STORAGE_KEY = 'sidebar:collapsed';
 
@@ -16,7 +21,7 @@ function formatLabel(link) {
   return link.trailing ? `${link.label} ${link.trailing}` : link.label;
 }
 
-export default function NavClient({ isAdmin, logoutAction }) {
+export default function NavClient({ isAdmin }) {
   const pathname = usePathname();
 
   const [collapsed, setCollapsed] = useState(false);
@@ -125,18 +130,18 @@ export default function NavClient({ isAdmin, logoutAction }) {
       >
         <div className="sidebar-header">
           <Link
-            href="/home"
+            href="/birthday"
             className="sidebar-logo"
-            aria-label="Home — Grishma & Saket"
+            aria-label="Home — Parshvi & Saket"
             onClick={closeMobile}
           >
             <span className="sidebar-logo-icon" aria-hidden="true">
               <span className="sidebar-logo-avatar-wrap">
-                <img src="/assets/avatar_saket.png" alt="Saket" className="sidebar-logo-avatar avatar-saket" />
-                <img src="/assets/avatar_grishma.png" alt="Grishma" className="sidebar-logo-avatar avatar-grishma" />
+                <img src="/birthday/media/photos/avatar-saket.jpg" alt="Saket" className="sidebar-logo-avatar avatar-saket" />
+                <img src="/birthday/media/photos/avatar-parshvi.jpg" alt="Parshvi" className="sidebar-logo-avatar avatar-parshvi" />
               </span>
             </span>
-            <span className="sidebar-logo-text">Grishma & Saket</span>
+            <span className="sidebar-logo-text">Parshvi & Saket</span>
           </Link>
           {mobileOpen && (
             <button
@@ -160,8 +165,8 @@ export default function NavClient({ isAdmin, logoutAction }) {
         </div>
 
         <ul className="sidebar-links" role="list">
-          {LINKS.map((link) => {
-            const active = pathname === link.href || pathname?.startsWith(link.href + '/');
+          {(isAdmin ? [...LINKS, PREVIEW_LINK] : LINKS).map((link) => {
+            const active = pathname === link.href || (!link.exact && pathname?.startsWith(link.href + '/'));
             return (
               <li key={link.href}>
                 <Link
@@ -190,63 +195,9 @@ export default function NavClient({ isAdmin, logoutAction }) {
               </li>
             );
           })}
-
-          {isAdmin && (
-            <li>
-              <Link
-                href="/admin"
-                className={`sidebar-link sidebar-link-admin${
-                  pathname === '/admin' ? ' active' : ''
-                }`}
-                onClick={closeMobile}
-                aria-current={pathname === '/admin' ? 'page' : undefined}
-                title={collapsed ? 'Admin ⚙️' : undefined}
-              >
-                <span className="sidebar-link-icon" aria-hidden="true">⚙️</span>
-                <span className="sidebar-link-label">Admin ⚙️</span>
-                <span className="sidebar-link-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="14" height="14">
-                    <path
-                      d="M9 6l6 6-6 6"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      fill="none"
-                    />
-                  </svg>
-                </span>
-                {collapsed && <span className="sidebar-tooltip">Admin ⚙️</span>}
-              </Link>
-            </li>
-          )}
         </ul>
 
         <div className="sidebar-footer">
-          <form action={logoutAction} className="sidebar-logout-form">
-            <button
-              type="submit"
-              className="sidebar-link sidebar-logout-btn"
-              title={collapsed ? 'Logout 🚪' : undefined}
-            >
-              <span className="sidebar-link-icon" aria-hidden="true">🚪</span>
-              <span className="sidebar-link-label">Logout 🚪</span>
-              <span className="sidebar-link-arrow" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="14" height="14">
-                  <path
-                    d="M9 6l6 6-6 6"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-              {collapsed && <span className="sidebar-tooltip">Logout 🚪</span>}
-            </button>
-          </form>
-
           <button
             type="button"
             className="sidebar-collapse-toggle"

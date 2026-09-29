@@ -45,7 +45,7 @@ export default function LoginPage() {
       const formData = new FormData();
       formData.append('password', password);
       await login(formData);
-      router.push('/home');
+      router.push('/birthday');
       router.refresh();
     } catch (err) {
       setError('Wrong password, try again 💔');
@@ -108,10 +108,10 @@ export default function LoginPage() {
 
         {/* Title Section */}
         <div className="login-header-section">
-          <p className="login-label">Our Moments 💙</p>
-          <h1 className="login-hero-title">Saket & Grishma</h1>
+          <p className="login-label">It's your birthday 🎂</p>
+          <h1 className="login-hero-title">Saket & Parshvi</h1>
           <p className="login-hero-sub">
-            Memories too precious to lose
+            A little surprise, made just for you
           </p>
         </div>
 

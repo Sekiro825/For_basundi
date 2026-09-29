@@ -1,0 +1,667 @@
+/* ============================================================
+   Celebration, part A: Hero · Orbit · Memories
+   Uses the tokens and shared classes from ../../birthday.css.
+   ============================================================ */
+
+/* ---------------------------------------------------------------
+   Hero: fireworks, "Happy Birthday", her name in gold script
+   --------------------------------------------------------------- */
+
+.cel-section.cel-hero {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding-bottom: clamp(104px, 16vh, 160px);
+}
+
+.cel-hero-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.cel-hero-fx canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* A soft dark pool behind the words so the fireworks never fight the text. */
+.cel-hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(58% 42% at 50% 52%, rgba(15, 6, 16, 0.6), rgba(15, 6, 16, 0) 72%);
+}
+
+.cel-hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  text-align: center;
+  pointer-events: none;
+}
+
+.cel-hero-date {
+  margin: 0 0 clamp(10px, 2.2vh, 22px);
+  letter-spacing: 0.42em;
+  padding-left: 0.42em; /* balance the trailing letter-spacing */
+}
+
+.cel-hero .cel-hero-title {
+  margin: 0;
+  font-family: var(--bd-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(3.4rem, 19vw, 5.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--bd-cream);
+  /* filter (not text-shadow) so the glow isn't clipped by the per-char masks */
+  filter: drop-shadow(0 0 22px rgba(232, 194, 110, 0.42)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+}
+
+.cel-hero-line {
+  display: block;
+}
+
+/* SplitText mask wrappers: extra room so italic overhangs and descenders aren't cut. */
+.cel-hero-char-mask {
+  padding: 0.1em 0.14em 0.2em;
+  margin: -0.1em -0.14em -0.2em;
+}
+
+.cel-hero-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(-10px, -1.2vw, -2px);
+}
+
+.cel-hero-name {
+  margin: 0;
+  padding: 0.14em 0.36em 0.22em;
+  font-family: var(--bd-script);
+  font-weight: 400;
+  font-size: clamp(3.8rem, 21vw, 9.5rem);
+  line-height: 1.12;
+  background-image: linear-gradient(
+    100deg,
+    var(--bd-gold-deep) 0%,
+    var(--bd-gold) 16%,
+    #fff1c9 30%,
+    var(--bd-gold) 44%,
+    var(--bd-gold-deep) 58%,
+    #f6d98f 78%,
+    var(--bd-gold-deep) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 18px rgba(232, 194, 110, 0.32));
+  animation: cel-hero-shimmer 7s linear infinite;
+}
+
+.cel-hero-swash {
+  display: block;
+  width: min(78%, 420px);
+  height: auto;
+  margin-top: clamp(-40px, -5vw, -16px);
+  overflow: visible;
+}
+
+.cel-hero-swash-path {
+  fill: none;
+  stroke: url(#cel-hero-swash-grad);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cel-hero-hint {
+  margin: clamp(14px, 3.5vh, 30px) 0 0;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.2rem, 1rem + 0.8vw, 1.55rem);
+  line-height: 1.2;
+  color: var(--bd-muted);
+}
+
+.cel-hero-cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(18px, 4vh, 40px);
+  z-index: 2;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.cel-hero-cue-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cel-hero-cue-line {
+  position: relative;
+  display: block;
+  width: 12px;
+  height: clamp(44px, 7vh, 66px);
+  overflow: hidden;
+}
+
+.cel-hero-cue-line::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, rgba(232, 194, 110, 0), rgba(232, 194, 110, 0.6));
+}
+
+.cel-hero-cue-line::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 3px;
+  height: 16px;
+  margin-left: -1.5px;
+  border-radius: 99px;
+  background: linear-gradient(to bottom, rgba(255, 244, 230, 0), var(--bd-cream));
+  box-shadow: 0 0 8px rgba(232, 194, 110, 0.9);
+  animation: cel-hero-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes cel-hero-shimmer {
+  from { background-position: 0% 50%; }
+  to { background-position: -200% 50%; }
+}
+
+@keyframes cel-hero-cue {
+  0% { transform: translateY(-100%); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(420%); opacity: 0; }
+}
+
+@media (min-width: 720px) {
+  .cel-hero .cel-hero-title {
+    font-size: clamp(3rem, 9.4vw, 9rem);
+    line-height: 1.06;
+  }
+
+  .cel-hero-line {
+    display: inline;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Orbit: "Another trip around the sun" (pinned, scrubbed)
+   --------------------------------------------------------------- */
+
+.cel-section.cel-orbit {
+  --cel-orbit-reserve: 340px; /* vertical room kept for heading, stats and closing */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.4vh, 26px);
+  height: 100vh;
+  height: 100svh;
+  padding: clamp(56px, 9vh, 96px) 16px clamp(20px, 5vh, 64px);
+  overflow: hidden;
+  text-align: center;
+}
+
+.cel-orbit-title {
+  margin: 0;
+}
+
+.cel-orbit-stage {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.cel-orbit-svg {
+  display: block;
+  width: min(100%, 620px, calc((100vh - var(--cel-orbit-reserve)) * 1.76));
+  width: min(100%, 620px, calc((100svh - var(--cel-orbit-reserve)) * 1.76));
+  min-width: 200px;
+  height: auto;
+  aspect-ratio: 600 / 340;
+  overflow: visible;
+}
+
+.cel-orbit-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cel-orbit-pulse 3.2s ease-in-out infinite alternate;
+}
+
+.cel-orbit-rays {
+  fill: none;
+  stroke: rgba(232, 194, 110, 0.5);
+  stroke-width: 1.4;
+  stroke-dasharray: 2 11;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cel-orbit-spin 48s linear infinite;
+}
+
+.cel-orbit-path {
+  fill: none;
+  stroke: rgba(232, 194, 110, 0.55);
+  stroke-width: 1.8;
+  stroke-dasharray: 1 9;
+  stroke-linecap: round;
+}
+
+.cel-orbit-trail {
+  fill: none;
+  stroke: url(#cel-orbit-trail-grad);
+  stroke-width: 2.4;
+  stroke-linecap: butt;
+  opacity: 0.7;
+}
+
+.cel-orbit-start {
+  fill: var(--bd-gold);
+}
+
+.cel-orbit-mark {
+  font-family: var(--bd-hand);
+  font-size: 22px;
+  fill: var(--bd-muted);
+}
+
+.cel-orbit-beat {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cel-orbit-beat 1.8s ease-in-out infinite;
+}
+
+.cel-orbit-stats {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: clamp(8px, 3vw, 56px);
+  width: min(100%, 680px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cel-orbit-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cel-orbit-num {
+  font-family: var(--bd-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(1.2rem, 0.55rem + 3.8vw, 2.7rem);
+  line-height: 1.1;
+  color: var(--bd-gold);
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+  text-shadow: 0 0 20px rgba(232, 194, 110, 0.35);
+}
+
+.cel-orbit-label {
+  font-family: var(--bd-sans);
+  font-weight: 600;
+  font-size: clamp(0.66rem, 0.6rem + 0.3vw, 0.85rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--bd-muted);
+}
+
+.cel-orbit-closing {
+  max-width: 34ch;
+  margin: 0;
+  font-family: var(--bd-serif);
+  font-style: italic;
+  font-size: clamp(1.1rem, 0.9rem + 1.2vw, 1.75rem);
+  line-height: 1.35;
+  color: var(--bd-blush);
+  filter: drop-shadow(0 0 14px rgba(244, 143, 177, 0.35));
+}
+
+.cel-orbit-word-mask {
+  padding: 0.06em 0.12em 0.12em;
+  margin: -0.06em -0.12em -0.12em;
+}
+
+@keyframes cel-orbit-pulse {
+  from { transform: scale(0.94); opacity: 0.75; }
+  to { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes cel-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cel-orbit-beat {
+  0%, 60%, 100% { transform: scale(1); }
+  15% { transform: scale(1.16); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.1); }
+}
+
+@media (min-width: 768px) {
+  .cel-section.cel-orbit {
+    --cel-orbit-reserve: 480px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Memories: pinned horizontal polaroid track
+   --------------------------------------------------------------- */
+
+.cel-section.cel-mem {
+  --cel-mem-card-w: max(180px, min(70vw, 300px, calc((100vh - 300px) * 0.6)));
+  --cel-mem-card-w: max(180px, min(70vw, 300px, calc((100svh - 300px) * 0.6)));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(6px, 1.6vh, 18px);
+  height: 100vh;
+  height: 100svh;
+  padding: clamp(56px, 9vh, 96px) 0 clamp(20px, 4vh, 48px);
+  overflow: hidden;
+}
+
+.cel-mem-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0 clamp(16px, 5vw, 64px);
+  text-align: center;
+}
+
+.cel-mem-head .cel-h2 {
+  margin: 0;
+}
+
+.cel-mem-sub {
+  margin: 0;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  line-height: 1.2;
+  color: var(--bd-muted);
+}
+
+.cel-mem-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cel-mem-track {
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 5vw, 64px);
+  width: max-content;
+  margin: 0;
+  padding: 42px calc(50% - var(--cel-mem-card-w) / 2) 58px;
+  list-style: none;
+  will-change: transform;
+}
+
+.cel-mem-slide {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--cel-mem-card-w);
+}
+
+.cel-mem-card {
+  position: relative;
+  margin: 0;
+  padding: 12px 12px 0;
+  border-radius: 3px;
+  background: linear-gradient(160deg, #fffaf2 0%, var(--bd-cream) 55%, #f5e4cf 100%);
+  box-shadow:
+    0 24px 46px -14px rgba(0, 0, 0, 0.65),
+    0 4px 10px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  transform-origin: 50% 20%;
+}
+
+.cel-mem-tape {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  z-index: 2;
+  width: 44%;
+  height: 26px;
+  transform: translateX(-50%) rotate(-3deg);
+  background:
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.22) 0 5px, rgba(255, 255, 255, 0) 5px 10px),
+    rgba(244, 143, 177, 0.55);
+  opacity: 0.85;
+  clip-path: polygon(0 12%, 4% 0, 96% 0, 100% 14%, 97% 32%, 100% 50%, 97% 68%, 100% 86%, 96% 100%, 4% 100%, 0 88%, 3% 70%, 0 50%, 3% 30%);
+}
+
+.cel-mem-card[data-tone='gold'] .cel-mem-tape {
+  background-color: rgba(232, 194, 110, 0.6);
+  transform: translateX(-50%) rotate(4deg);
+}
+
+.cel-mem-slide:nth-child(4n + 3) .cel-mem-tape {
+  left: 36%;
+}
+
+.cel-mem-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 1px;
+  background: linear-gradient(145deg, #f7c6d8 0%, #f2d9a6 55%, #d9c2f0 100%);
+}
+
+.cel-mem-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(42, 14, 37, 0.08), inset 0 0 26px rgba(42, 14, 37, 0.2);
+}
+
+.cel-mem-img {
+  position: absolute;
+  top: 0;
+  left: -10%;
+  display: block;
+  width: 120%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.cel-mem-ph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(70% 55% at 30% 25%, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 70%),
+    linear-gradient(145deg, rgba(244, 143, 177, 0.9) 0%, rgba(232, 194, 110, 0.75) 55%, rgba(179, 157, 219, 0.85) 100%);
+}
+
+.cel-mem-ph::before {
+  content: '\2661';
+  font-family: var(--bd-serif);
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 2px 12px rgba(109, 15, 60, 0.35);
+}
+
+.cel-mem-cap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  height: 66px;
+  padding: 6px 4px 6px;
+  text-align: center;
+}
+
+.cel-mem-caption {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.08rem, 1rem + 0.25vw, 1.22rem);
+  line-height: 1.05;
+  color: #3a1631;
+}
+
+.cel-mem-date {
+  font-family: var(--bd-sans);
+  font-weight: 600;
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(58, 22, 49, 0.55);
+}
+
+.cel-mem-end {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: var(--cel-mem-card-w);
+}
+
+.cel-mem-more {
+  margin: 0;
+  font-family: var(--bd-hand);
+  font-size: clamp(1.9rem, 1.4rem + 2vw, 2.8rem);
+  line-height: 1.1;
+  text-align: center;
+  color: var(--bd-blush);
+  text-shadow: 0 0 22px rgba(244, 143, 177, 0.45);
+  transform: rotate(-4deg);
+}
+
+.cel-mem-more-heart {
+  display: block;
+  margin-top: 0.2em;
+  font-family: var(--bd-serif);
+  font-size: 0.8em;
+  color: var(--bd-gold);
+}
+
+.cel-mem-progress {
+  width: min(220px, 50vw);
+  height: 2px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cel-mem-progress-bar {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bd-rose), var(--bd-gold));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* ---------------------------------------------------------------
+   Short landscape screens: tighten the pinned layouts
+   --------------------------------------------------------------- */
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .cel-section.cel-orbit {
+    --cel-orbit-reserve: 250px;
+    gap: 8px;
+    padding-top: 48px;
+  }
+
+  .cel-orbit-closing {
+    font-size: 1rem;
+  }
+
+  .cel-section.cel-mem {
+    --cel-mem-card-w: 170px;
+    padding-top: 44px;
+  }
+
+  .cel-mem-track {
+    padding-top: 30px;
+    padding-bottom: 40px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Reduced motion: no pinning, no loops, content shown plainly
+   --------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cel-hero-name,
+  .cel-orbit-halo,
+  .cel-orbit-rays,
+  .cel-orbit-beat {
+    animation: none;
+  }
+
+  .cel-hero-cue-line::after {
+    top: 38%;
+    opacity: 1;
+    animation: none;
+  }
+
+  .cel-section.cel-orbit,
+  .cel-section.cel-mem {
+    height: auto;
+  }
+
+  .cel-mem-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 194, 110, 0.4) transparent;
+  }
+
+  .cel-mem-track {
+    will-change: auto;
+  }
+
+  .cel-mem-slide,
+  .cel-mem-end {
+    scroll-snap-align: center;
+  }
+
+  .cel-mem-card {
+    rotate: calc(var(--cel-mem-tilt, 0deg) * 0.5);
+  }
+
+  .cel-mem-progress {
+    display: none;
+  }
+}
